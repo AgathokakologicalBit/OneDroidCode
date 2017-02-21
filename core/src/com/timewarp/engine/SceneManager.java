@@ -45,6 +45,10 @@ public class SceneManager {
      * Initializes SceneManager, GUI, OpenGL, Animator and AssetManager
      */
     public void init() {
+        Time.init();
+        Time.addTimer("running_time");
+        Time.addTimer("delta_time");
+
         input.setCatchBackKey(true);
 
         currentScene = null;
@@ -109,7 +113,7 @@ public class SceneManager {
 
         for (GUIControl control : currentScene.controls)
             if (control.isActive())
-                control.update(Gdx.graphics.getDeltaTime());
+                control.update();
     }
 
     /**
@@ -134,6 +138,8 @@ public class SceneManager {
             currentScene.onResolutionChanged();
         }
 
+        Time.update();
+
         fpsCheckTimer += Gdx.graphics.getDeltaTime();
         if (fpsCheckTimer >= 1f) {
             fpsCheckTimer = 0;
@@ -149,12 +155,20 @@ public class SceneManager {
 
         // update all controls
         for (GUIControl control : currentScene.controls) {
-            if (control.isActive()) {
-                control.update(Gdx.graphics.getDeltaTime());
-            }
+            this.updateControl(control);
         }
 
         currentScene.update(Gdx.graphics.getDeltaTime());
+        Time.resetTimer("delta_time");
+    }
+
+    private void updateControl(GUIControl control) {
+        if (!control.isActive()) return;
+        control.update();
+
+        for (GUIControl subControl: control.controls) {
+            this.updateControl(subControl);
+        }
     }
 
     /**
@@ -176,12 +190,21 @@ public class SceneManager {
         orthographicCamera.update();
         GUI.batch.begin();
 
-        for (GUIControl control : currentScene.controls)
-            if (control.isActive())
-                control.render();
+        for (GUIControl control : currentScene.controls) {
+            this.renderControl(control);
+        }
 
         Gdx.gl.glDisable(GL20.GL_BLEND);
         GUI.batch.end();
+    }
+
+    private void renderControl(GUIControl control) {
+        if (!control.isActive()) return;
+        control.render();
+
+        for (GUIControl subControl: control.controls) {
+            this.renderControl(subControl);
+        }
     }
 
     /**

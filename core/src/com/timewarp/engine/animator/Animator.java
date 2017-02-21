@@ -1,6 +1,6 @@
 package com.timewarp.engine.animator;
 
-import com.timewarp.engine.Mathf;
+import com.timewarp.engine.Math.Mathf;
 
 import java.util.ArrayList;
 import java.util.LinkedList;

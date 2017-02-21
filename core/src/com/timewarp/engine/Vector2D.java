@@ -56,6 +56,16 @@ public class Vector2D {
         this.y = y;
     }
 
+    /**
+     * Updates X and Y values of vector
+     *
+     * @param vector vector to copy values from
+     */
+    public void set(Vector2D vector) {
+        this.x = vector.x;
+        this.y = vector.y;
+    }
+
 
     /**
      * Translates current vector by given offset
@@ -243,7 +253,7 @@ public class Vector2D {
     public Vector2D rotated(float theta) {
         final float angle = this.getAngle();
         final float length = this.getLength();
-        final float TWO_PI = Mathf.PI * 2;
+        final float TWO_PI = com.timewarp.engine.Math.Mathf.PI * 2;
 
         final float newAngle = (angle + theta % TWO_PI) % TWO_PI;
 
@@ -261,10 +271,22 @@ public class Vector2D {
      * @return normalized vector
      */
     public Vector2D normalized() {
+        return this.normalized(1);
+    }
+
+    /**
+     * Returns normalized vector to given length
+     * * Vector with Euclidean length of 'targetLength'
+     * Returns 0 length vector if current vector have 0 length
+     *
+     * @param targetLength Target vector length
+     * @return normalized vector
+     */
+    public Vector2D normalized(float targetLength) {
         float length = getLength();
         if (length == 0) return new Vector2D();
 
-        return new Vector2D(this.x / length, this.y / length);
+        return new Vector2D(this.x / length * targetLength, this.y / length * targetLength);
     }
 
     @Override

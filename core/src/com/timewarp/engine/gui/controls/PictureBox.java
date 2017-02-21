@@ -37,41 +37,41 @@ public class PictureBox extends GUIControl {
         switch (sizeMode)
         {
             case Normal:
-                GUI.DrawTexture(image, position, imageSize);
+                GUI.DrawTexture(image, transform.position, imageSize);
                 break;
 
             case Centered:
                 // TODO: render big textures properly
-                GUI.DrawTexture(image, position.add(imageSize.div(2)), imageSize);
+                GUI.DrawTexture(image, transform.position.add(imageSize.div(2)), imageSize);
                 break;
 
             case Fit:
-                float controlRation = size.x / size.y;
+                float controlRation = transform.scale.x / transform.scale.y;
                 float imageRatio = imageWidth / imageHeight;
 
                 if (imageRatio > controlRation)
                     imageRatio = controlRation;
 
                 imageSizeNew = imageSize.mult(imageRatio);
-                offset = size.sub(imageSizeNew).div(2);
+                offset = transform.scale.sub(imageSizeNew).div(2);
 
                 GUI.DrawTexture(image, offset, imageSizeNew);
                 break;
 
             case Stretch:
-                GUI.DrawTexture(image, position, size);
+                GUI.DrawTexture(image, transform.position, transform.scale);
                 break;
 
             case Zoom:
                 // TODO: render big textures properly
-                controlRation = size.x / size.y;
+                controlRation = transform.scale.x / transform.scale.y;
                 imageRatio = imageWidth / imageHeight;
 
                 if (imageRatio < controlRation)
                     imageRatio = controlRation;
 
                 imageSizeNew = imageSize.mult(imageRatio);
-                offset = size.sub(imageSizeNew).div(2);
+                offset = transform.scale.sub(imageSizeNew).div(2);
 
                 GUI.DrawTexture(image, offset, imageSizeNew);
                 break;

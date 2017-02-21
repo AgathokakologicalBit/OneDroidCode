@@ -1,6 +1,7 @@
 package com.timewarp.engine.animator;
 
-import com.timewarp.engine.Mathf;
+import com.timewarp.engine.Math.Mathf;
+import com.timewarp.engine.Math.Range;
 
 import java.util.ArrayList;
 
@@ -100,8 +101,12 @@ public class Animation {
     public ArrayList<AnimationEvent> getOccurredEvents(float fromTime, float toTime) {
         ArrayList<AnimationEvent> events = new ArrayList<AnimationEvent>(2);
 
+        Range<Float> frame_time = new Range<Float>()
+                .from(Range.exclusive, fromTime)
+                .to(Range.inclusive, toTime);
+
         for (AnimationEvent event : this.events) {
-            if (Mathf.inRange(event.getTime(), fromTime, toTime, Mathf.RANGE_MAX_INCLUSIVE))
+            if (frame_time.contains(event.getTime()))
                 events.add(event);
         }
 

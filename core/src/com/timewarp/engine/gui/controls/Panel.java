@@ -1,5 +1,6 @@
 package com.timewarp.engine.gui.controls;
 
+import com.timewarp.engine.Vector2D;
 import com.timewarp.engine.gui.GUIControl;
 
 public class Panel extends GUIControl {
@@ -8,16 +9,11 @@ public class Panel extends GUIControl {
         super();
     }
 
-    public Panel(float x, float y) {
-        super(x, y);
+    public Panel(Vector2D position) {
+        super(position);
     }
 
-    public Panel(float x, float y, float width, float height) {
-        super(x, y, width, height);
-    }
-
-    @Override
-    public void render() {
-        super.render();
+    public Panel(Vector2D position, Vector2D scale) {
+        super(position, scale);
     }
 }

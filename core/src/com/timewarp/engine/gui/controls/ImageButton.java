@@ -24,7 +24,7 @@ public class ImageButton extends GUIControl {
         super.render();
 
         if (backgroundTexture != null)
-            GUI.DrawTexture(backgroundTexture, position, size);
+            GUI.DrawTexture(backgroundTexture, transform.position, transform.scale);
     }
 
     @Override

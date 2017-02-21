@@ -281,14 +281,10 @@ public class GUI {
      */
     public static void DrawText(String text, float x, float y, float width, float height, float scale, Color color) {
         final Vector2D textSize = getTextSize(text, scale);
-        final float ws = width / textSize.x;
-        final float hs = height / textSize.y;
-        final float newScale = (ws > hs ? hs : ws) * scale;
+        final float offset_left = (width - textSize.x) / 2;
+        final float offset_top = (height - textSize.y) / 2;
 
-        final float ax = (width - textSize.x * scale) / 2;
-        final float ay = (height - textSize.y * scale) / 2;
-
-        DrawText(text, x + ax, y + ay, color, newScale);
+        DrawText(text, x + offset_left, y + offset_top, color, scale);
     }
 
     /**
