@@ -8,8 +8,8 @@ import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.timewarp.engine.animator.Animator;
 import com.timewarp.engine.configs.ProjectConfig;
+import com.timewarp.engine.entities.GameObject;
 import com.timewarp.engine.gui.GUI;
-import com.timewarp.engine.gui.GUIControl;
 import com.timewarp.games.onedroidcode.AssetManager;
 
 import static com.badlogic.gdx.Gdx.input;
@@ -111,9 +111,9 @@ public class SceneManager {
         currentScene.loadResources();
         currentScene.onResolutionChanged();
 
-        for (GUIControl control : currentScene.controls)
-            if (control.isActive())
-                control.update();
+        for (GameObject gameObject : currentScene.objects)
+            if (gameObject.isActive())
+                gameObject.update();
     }
 
     /**
@@ -153,22 +153,18 @@ public class SceneManager {
             GUI.touchPosition = new Vector2D(input.getX(), input.getY());
         else GUI.touchPosition = new Vector2D();
 
-        // update all controls
-        for (GUIControl control : currentScene.controls) {
-            this.updateControl(control);
+
+        for (GameObject gameObject : currentScene.objects) {
+            this.updateGameObject(gameObject);
         }
 
         currentScene.update(Gdx.graphics.getDeltaTime());
         Time.resetTimer("delta_time");
     }
 
-    private void updateControl(GUIControl control) {
-        if (!control.isActive()) return;
-        control.update();
-
-        for (GUIControl subControl: control.controls) {
-            this.updateControl(subControl);
-        }
+    private void updateGameObject(GameObject gameObject) {
+        if (!gameObject.isActive()) return;
+        gameObject.update();
     }
 
     /**
@@ -190,21 +186,17 @@ public class SceneManager {
         orthographicCamera.update();
         GUI.batch.begin();
 
-        for (GUIControl control : currentScene.controls) {
-            this.renderControl(control);
+        for (GameObject gameObject : currentScene.objects) {
+            this.renderGameObject(gameObject);
         }
 
         Gdx.gl.glDisable(GL20.GL_BLEND);
         GUI.batch.end();
     }
 
-    private void renderControl(GUIControl control) {
-        if (!control.isActive()) return;
-        control.render();
-
-        for (GUIControl subControl: control.controls) {
-            this.renderControl(subControl);
-        }
+    private void renderGameObject(GameObject gameObject) {
+        if (!gameObject.isActive()) return;
+        gameObject.render();
     }
 
     /**
@@ -228,8 +220,8 @@ public class SceneManager {
         if (currentScene == null) return;
         currentScene.pause();
 
-        for (GUIControl control : currentScene.controls) {
-            control.animator.pause();
+        for (GameObject gameObject: currentScene.objects) {
+            gameObject.animator.pause();
         }
     }
 
@@ -246,9 +238,19 @@ public class SceneManager {
         }
 
         currentScene.resume();
-        for (GUIControl control : currentScene.controls) {
-            control.animator.resume();
+        for (GameObject gameObject : currentScene.objects) {
+            gameObject.animator.resume();
         }
+    }
+
+    /**
+     * Adds gameobject to the scene
+     * @param gameObject GameObject that will be added
+     */
+    public void addGameObject(GameObject gameObject) {
+        if (gameObject == null) return;
+
+        this.currentScene.objects.add(gameObject);
     }
 
     /**

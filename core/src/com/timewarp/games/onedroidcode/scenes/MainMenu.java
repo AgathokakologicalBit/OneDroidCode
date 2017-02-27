@@ -2,23 +2,27 @@ package com.timewarp.games.onedroidcode.scenes;
 
 import com.timewarp.engine.Scene;
 import com.timewarp.engine.Time;
-import com.timewarp.engine.Timer;
 import com.timewarp.engine.Vector2D;
+import com.timewarp.engine.entities.GameObject;
 import com.timewarp.engine.gui.GUI;
-import com.timewarp.engine.gui.controls.Button;
-import com.timewarp.engine.gui.controls.Panel;
-import com.timewarp.engine.gui.controls.Textbox;
-
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.timewarp.engine.gui.controls.UIButton;
+import com.timewarp.engine.gui.controls.UIPanel;
+import com.timewarp.engine.gui.controls.UITextbox;
 
 
 public class MainMenu extends Scene {
 
-    private Button buttonStatToggle;
+    private UIButton buttonStatToggle;
 
-    private Panel panelStats;
-    private Textbox textboxFps;
+    private UIPanel panelStats;
+    private UITextbox textboxFps;
+    private UITextbox textboxDeltaTime;
+
+    private final String textOpened = "X";
+    private final String textClosed = "O";
+
+    private final String fpsFieldName = "Frames per second: ";
+    private final String deltaFieldName = "Delta time: ";
 
     @Override
     public void initialize() {
@@ -29,26 +33,31 @@ public class MainMenu extends Scene {
 
     @Override
     public void onResolutionChanged() {
-        buttonStatToggle = new Button();
-        buttonStatToggle.transform.position.set(100, 100);
-        buttonStatToggle.transform.scale.set(400, 100);
-        buttonStatToggle.text = "SHOW STATS";
-        this.controls.add(buttonStatToggle);
+        panelStats = GameObject.instantiate(UIPanel.class);
+        panelStats.transform.moveTo(new Vector2D(50, 50));
+        panelStats.transform.setScale(new Vector2D(GUI.Width - 100, GUI.Height - 100));
+        panelStats.setActive(false);
 
-        panelStats = new Panel(
-                new Vector2D(50, 50),
-                new Vector2D(GUI.Width - 100, GUI.Height - 100)
-        );
-        //panelStats.setActive(false);
+        textboxFps = GameObject.instantiate(UITextbox.class);
+        textboxFps.transform.moveTo(new Vector2D(50, 50));
+        textboxFps.transform.setScale(new Vector2D(400, 30));
+        textboxFps.text.set(fpsFieldName + 0);
+        textboxFps.text.setTextSize(26);
+        textboxFps.transform.setParent(panelStats.transform);
 
-        textboxFps = new Textbox();
-        textboxFps.transform.position.set(500, 100);
-        textboxFps.transform.scale.set(400, 100);
-        textboxFps.text = "FPS: ";
+        textboxDeltaTime = GameObject.instantiate(UITextbox.class);
+        textboxDeltaTime.transform.moveTo(new Vector2D(50, 125));
+        textboxDeltaTime.transform.setScale(new Vector2D(400, 30));
+        textboxDeltaTime.text.set(deltaFieldName + 0);
+        textboxDeltaTime.text.setTextSize(26);
+        textboxDeltaTime.transform.setParent(panelStats.transform);
 
-        panelStats.controls.add(textboxFps);
-
-        this.controls.add(panelStats);
+        buttonStatToggle = GameObject.instantiate(UIButton.class);
+        buttonStatToggle.transform.position.set(GUI.Width - 150, 50);
+        buttonStatToggle.transform.scale.set(100, 100);
+        buttonStatToggle.text.set(textClosed);
+        buttonStatToggle.text.setTextSize(24);
+        buttonStatToggle.text.setTextAlignment(true);
     }
 
     @Override
@@ -59,20 +68,19 @@ public class MainMenu extends Scene {
     @Override
     public void update(double deltaTime) {
         if (buttonStatToggle.isClicked()) {
-            if ("SHOW STATS".equals(buttonStatToggle.text)) {
-                buttonStatToggle.text = "HIDE STATS";
+            if (textClosed.equals(buttonStatToggle.text.get())) {
+                buttonStatToggle.text.set(textOpened);
                 panelStats.setActive(true);
 
             } else {
-                buttonStatToggle.text = "SHOW STATS";
+                buttonStatToggle.text.set(textClosed);
                 panelStats.setActive(false);
             }
         }
 
         if (Time.isTimerActivated("stats_update")) {
-            Logger.getAnonymousLogger().log(Level.INFO, Boolean.toString(this.textboxFps.isActive()));
-            this.textboxFps.text = "FPS: " + Time.getFps();
-            this.textboxFps.text = "DELTA-TIME: " + (int) (Time.getDeltaTime() * 1000);
+            this.textboxFps.text.set(fpsFieldName + Time.getFps());
+            this.textboxDeltaTime.text.set(deltaFieldName + (int)(Time.getDeltaTime() * 1000));
         }
     }
 

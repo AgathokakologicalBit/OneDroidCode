@@ -1,26 +1,16 @@
 package com.timewarp.engine.gui.controls;
 
-import com.badlogic.gdx.graphics.Texture;
-import com.timewarp.engine.Vector2D;
-import com.timewarp.engine.gui.GUI;
-import com.timewarp.engine.gui.GUIControl;
+import com.timewarp.engine.entities.GameObject;
 
-public class PictureBox extends GUIControl {
+public class PictureBox extends GameObject {
 
-    public Texture image;
-    public GUI.SizeMode sizeMode = GUI.SizeMode.Normal;
+    // public Texture image;
+    // public GUI.SizeMode sizeMode = GUI.SizeMode.Normal;
 
-    public PictureBox() {
-        super();
+    protected PictureBox() {
+        throw new RuntimeException("Class is not supported at this moment");
     }
-
-    public PictureBox(float x, float y) {
-        super(x, y);
-    }
-
-    public PictureBox(float x, float y, float width, float height) {
-        super(x, y, width, height);
-    }
+    /*
 
     @Override
     public void render() {
@@ -77,4 +67,5 @@ public class PictureBox extends GUIControl {
                 break;
         }
     }
+    */
 }

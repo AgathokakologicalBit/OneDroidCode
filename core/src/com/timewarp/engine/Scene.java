@@ -1,6 +1,6 @@
 package com.timewarp.engine;
 
-import com.timewarp.engine.gui.GUIControl;
+import com.timewarp.engine.entities.GameObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +10,7 @@ public abstract class Scene {
     /**
      * List of UI elements, that scene have
      */
-    protected List<GUIControl> controls;
+    protected List<GameObject> objects;
 
 
     /**
@@ -18,7 +18,7 @@ public abstract class Scene {
      * And prepares resources
      */
     public void initialize() {
-        this.controls = new ArrayList<GUIControl>(50);
+        this.objects = new ArrayList<GameObject>(50);
     }
 
 
@@ -38,8 +38,8 @@ public abstract class Scene {
      * Frees all loaded resources
      */
     public void unloadResources() {
-        for (GUIControl control : controls) {
-            control.dispose();
+        for (GameObject gameObject : this.objects) {
+            gameObject.dispose();
         }
     }
 

@@ -27,6 +27,8 @@ public class GUI {
 
     private static GlyphLayout layout;
 
+    private static float baseTextSize;
+
 
     /**
      * Size mode
@@ -66,6 +68,8 @@ public class GUI {
         pix.setColor(1, 1, 1, 1);
         pix.fill();
         emptyTexture = new Texture(pix);
+
+        baseTextSize = getTextSize("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()").y;
     }
 
 
@@ -76,7 +80,9 @@ public class GUI {
      * @return Text's size in pixels
      */
     public static Vector2D getTextSize(String text) {
-        return getTextSize(text, 1);
+        font.getData().setScale(1);
+        layout.setText(font, text);
+        return new Vector2D(layout.width, layout.height);
     }
 
     /**
@@ -87,7 +93,7 @@ public class GUI {
      * @return Text's size in pixels
      */
     public static Vector2D getTextSize(String text, float scale) {
-        font.getData().setScale(scale);
+        font.getData().setScale(baseTextSize / scale);
         layout.setText(font, text);
         return new Vector2D(layout.width, layout.height);
     }
@@ -191,7 +197,7 @@ public class GUI {
      * @param position Position in pixels
      */
     public static void DrawText(String text, Vector2D position) {
-        DrawText(text, position.x, position.y, Color.WHITE, 1f);
+        DrawText(text, position.x, position.y, Color.WHITE, 16);
     }
 
     /**
@@ -211,7 +217,7 @@ public class GUI {
      * @param color Text color
      */
     public static void DrawText(String text, Vector2D position, Color color) {
-        DrawText(text, position.x, position.y, color, 1f);
+        DrawText(text, position.x, position.y, color, 16);
     }
 
     /**
@@ -232,7 +238,7 @@ public class GUI {
      * @param y Vertical position in pixels
      */
     public static void DrawText(String text, float x, float y) {
-        DrawText(text, x, y, Color.WHITE, 1f);
+        DrawText(text, x, y, Color.WHITE, 16);
     }
 
     /**
@@ -254,7 +260,7 @@ public class GUI {
      * @param color Text color
      */
     public static void DrawText(String text, float x, float y, Color color) {
-        DrawText(text, x, y, color, 1f);
+        DrawText(text, x, y, color, 16);
     }
 
     /**
@@ -266,7 +272,7 @@ public class GUI {
      * @param height Text container height in pixels
      */
     public static void DrawText(String text, float x, float y, float width, float height) {
-        DrawText(text, x, y, width, height, 0.9f, Color.WHITE);
+        DrawText(text, x, y, width, height, 16, Color.WHITE);
     }
 
     /**
@@ -282,7 +288,7 @@ public class GUI {
     public static void DrawText(String text, float x, float y, float width, float height, float scale, Color color) {
         final Vector2D textSize = getTextSize(text, scale);
         final float offset_left = (width - textSize.x) / 2;
-        final float offset_top = (height - textSize.y) / 2;
+        final float offset_top = (height - textSize.y / 2) / 2;
 
         DrawText(text, x + offset_left, y + offset_top, color, scale);
     }
@@ -309,8 +315,13 @@ public class GUI {
      */
     public static void DrawText(String text, float x, float y, Color color, float scale) {
         font.setColor(color);
-        font.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-        font.getData().setScale(scale);
+        font.getRegion().getTexture().setFilter(
+                Texture.TextureFilter.Linear,
+                Texture.TextureFilter.Linear
+        );
+
+        final float iscale = scale / baseTextSize;
+        font.getData().setScale(iscale);
         font.draw(batch, text, x, Height - y);
     }
 

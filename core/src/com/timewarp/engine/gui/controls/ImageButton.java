@@ -1,24 +1,15 @@
 package com.timewarp.engine.gui.controls;
 
-import com.badlogic.gdx.graphics.Texture;
-import com.timewarp.engine.gui.GUI;
-import com.timewarp.engine.gui.GUIControl;
+import com.timewarp.engine.entities.GameObject;
 
-public class ImageButton extends GUIControl {
-    public Texture backgroundTexture;
+public class ImageButton extends GameObject {
+    // public Texture backgroundTexture;
 
-    public ImageButton() {
-        super();
+    protected ImageButton(){
+        throw new RuntimeException("Class is not supported at this moment");
     }
 
-    public ImageButton(float x, float y) {
-        super(x, y);
-    }
-
-    public ImageButton(float x, float y, float width, float height) {
-        super(x, y, width, height);
-    }
-
+    /*
     @Override
     public void render() {
         super.render();
@@ -31,4 +22,5 @@ public class ImageButton extends GUIControl {
     public void dispose() {
         if (backgroundTexture != null) backgroundTexture.dispose();
     }
+    */
 }

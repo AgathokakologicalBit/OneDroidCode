@@ -3,8 +3,13 @@ package com.timewarp.engine.entities;
 public abstract class Component {
     private boolean isActive = true;
 
-    protected GameObject gameObject;
-    protected  Transform transform;
+    protected final GameObject gameObject;
+    protected final Transform transform;
+
+    protected Component(GameObject gameObject) {
+        this.gameObject = gameObject;
+        this.transform = gameObject.transform;
+    }
 
     public void awake() {}
     public void start() {}
@@ -14,11 +19,13 @@ public abstract class Component {
 
     public void render() {}
 
+    public void dispose() {}
+
     public final boolean isActive() {
         return this.isActive;
     }
 
-    public final void setActive(boolean new_state) {
-        this.isActive = new_state;
+    public final void setActive(boolean newState) {
+        this.isActive = newState;
     }
 }
