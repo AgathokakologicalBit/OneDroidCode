@@ -7,5 +7,5 @@ import com.timewarp.games.onedroidcode.scenes.MainMenu;
 public class ProjectConfig {
     public static final Scene START_SCENE = new MainMenu();
 
-    public static final Color BACKGROUND_COLOR = new Color(1f, 1f, 1f, 1);
+    public static final Color BACKGROUND_COLOR = new Color(.2f, .2f, .2f, 1);
 }

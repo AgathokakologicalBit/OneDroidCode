@@ -1,8 +1,5 @@
 package com.timewarp.engine;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 public final class Timer {
     private long startTime = 0;
     private long lastUpdateTime = 0;
