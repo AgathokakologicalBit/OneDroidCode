@@ -17,7 +17,7 @@ public class TextRenderingNode extends Node {
 
         this.textbox = textbox;
 
-        this.inputs.add(new Value("string"));
+        this.inputs.add(new Value(Value.TYPE_ANY));
     }
 
     @Override
@@ -32,6 +32,11 @@ public class TextRenderingNode extends Node {
     @Override
     public void reset() {
 
+    }
+
+    @Override
+    public String represent(CodeRunner runner) {
+        return this.toString();
     }
 
     @Override

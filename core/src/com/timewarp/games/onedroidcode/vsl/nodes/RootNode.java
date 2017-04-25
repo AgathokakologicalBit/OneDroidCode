@@ -23,6 +23,12 @@ public final class RootNode extends Node {
 
     }
 
+
+    @Override
+    public String represent(CodeRunner runner) {
+        return this.toString();
+    }
+
     @Override
     public String toString() {
         return "<.>";

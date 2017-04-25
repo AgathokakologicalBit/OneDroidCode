@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.timewarp.engine.Vector2D;
 
@@ -346,6 +347,20 @@ public class GUI {
      */
     public static void DrawTexture(Texture texture, Vector2D position, Vector2D size) {
         DrawTexture(texture, position.x, position.y, size.x, size.y);
+    }
+
+    public static void DrawTextureRegion(TextureRegion texture, float x, float y, float width, float height) {
+        batch.draw(texture, x, Height - y - height, width, height);
+    }
+
+    public static void DrawTextureRegion(TextureRegion texture, float x, float y, float width, float height, float rotation) {
+        batch.draw(
+                texture, x, Height - y - height,
+                width / 2, height / 2,
+                width, height,
+                1f, 1f,
+                rotation
+        );
     }
 
     // TODO: Create other drawing methods

@@ -12,6 +12,9 @@ import com.timewarp.engine.entities.GameObject;
 import com.timewarp.engine.gui.GUI;
 import com.timewarp.games.onedroidcode.AssetManager;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import static com.badlogic.gdx.Gdx.input;
 
 /**
@@ -45,6 +48,7 @@ public class SceneManager {
      * Initializes SceneManager, GUI, OpenGL, Animator and AssetManager
      */
     public void init() {
+        Logger.getAnonymousLogger().log(Level.INFO, "[SceneMG] Initialization");
         Time.init();
         Time.addTimer("running_time");
         Time.addTimer("delta_time");
@@ -85,6 +89,7 @@ public class SceneManager {
         try {
             loadScene(ProjectConfig.START_SCENE.getClass().newInstance());
         } catch (Exception e) {
+            Logger.getAnonymousLogger().log(Level.WARNING, "Can not load main scene");
             e.printStackTrace();
             throw new RuntimeException("Can not load main scene");
         }
@@ -100,17 +105,26 @@ public class SceneManager {
             loadStartScene();
             return;
         }
+        Logger.getAnonymousLogger().log(Level.INFO, "[SceneMG] Loading scene '" + scene.getClass().getSimpleName() + "'");
         fpsCheckTimer = 1f;
 
         if (currentScene != null) {
+            Logger.getAnonymousLogger().log(Level.INFO, "[SceneMG] Unloading old resources");
             currentScene.pause();
             currentScene.unloadResources();
         }
+
+        Logger.getAnonymousLogger().log(Level.INFO, "[SceneMG] Initializing scene");
         currentScene = scene;
         currentScene.initialize();
+
+        Logger.getAnonymousLogger().log(Level.INFO, "[SceneMG] Loading scene resources");
         currentScene.loadResources();
+
+        Logger.getAnonymousLogger().log(Level.INFO, "[SceneMG] Setting up camera resolution");
         currentScene.onResolutionChanged();
 
+        Logger.getAnonymousLogger().log(Level.INFO, "[SceneMG] Preparing game objects");
         for (GameObject gameObject : currentScene.objects)
             if (gameObject.isActive())
                 gameObject.update();
@@ -144,6 +158,8 @@ public class SceneManager {
         if (fpsCheckTimer >= 1f) {
             fpsCheckTimer = 0;
             fps = (int) (1f / Gdx.graphics.getDeltaTime());
+
+            Logger.getAnonymousLogger().log(Level.FINEST, "FPS: " + fps);
         }
 
         // update touch state
@@ -180,12 +196,12 @@ public class SceneManager {
 
         // update 3D camera and render scene
         perspectiveCamera.update();
-        currentScene.render();
 
         // render GUI
         orthographicCamera.update();
         GUI.batch.begin();
 
+        currentScene.render();
         for (GameObject gameObject : currentScene.objects) {
             this.renderGameObject(gameObject);
         }

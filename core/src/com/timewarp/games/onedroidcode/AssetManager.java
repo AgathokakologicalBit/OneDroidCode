@@ -2,11 +2,24 @@ package com.timewarp.games.onedroidcode;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.timewarp.engine.gui.GUI;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class AssetManager {
 
     public static Preferences preferences;
+    private static TextureRegion[][] gameTextures;
+
+
+    // ===--- TEXTURES LIST ---===
+    public static TextureRegion playerTexture;
+
+    // =- FLOOR TILES -=
+    public static TextureRegion floorTiledStoneTexture;
 
     public static void unloadAssets()
     {
@@ -17,9 +30,18 @@ public class AssetManager {
 
     public static void loadAssets()
     {
+        Logger.getAnonymousLogger().log(Level.INFO, "Loading assets");
         preferences = Gdx.app.getPreferences("prefs");
 
         generateAnimations();
+
+        TextureRegion textureRegion = new TextureRegion(new Texture(Gdx.files.internal("textures/tiles.png")));
+        gameTextures = textureRegion.split(32, 32);
+
+        playerTexture = gameTextures[0][0];
+        floorTiledStoneTexture = gameTextures[1][0];
+
+        Logger.getAnonymousLogger().log(Level.INFO, "Successfully loaded all assets");
     }
 
     private static void generateAnimations()

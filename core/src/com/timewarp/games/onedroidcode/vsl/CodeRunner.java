@@ -56,14 +56,25 @@ public class CodeRunner {
         return null;
     }
 
+    public boolean isActive(Node node) {
+        if (nextNode == node) return true;
+
+        for (Node contextNode : contexts)
+            if (contextNode == node)
+                return true;
+
+        return false;
+    }
+
     public String getCodeRepresentation() {
         String representation = "";
         Node next = startNode;
 
         while (next != null) {
-            representation += next == nextNode ? "[" : " ";
-            representation += next.toString();
-            representation += next == nextNode ? "]" : " ";
+            boolean active = isActive(next);
+            representation += active ? "[" : " ";
+            representation += next.represent(this);
+            representation += active ? "]" : " ";
 
             next = next.next;
         }

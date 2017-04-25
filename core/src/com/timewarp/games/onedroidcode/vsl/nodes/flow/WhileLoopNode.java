@@ -15,12 +15,11 @@ public class WhileLoopNode extends Node {
         super(next);
 
         // Condition
-        inputs.add(new Value("boolean"));
+        inputs.add(new Value(Value.TYPE_BOOLEAN));
     }
 
     @Override
     public Node execute(CodeRunner runner) {
-
         Logger.getAnonymousLogger().log(Level.INFO, "WHILE LOOP [CONDITION](" + inputs.get(0).toBoolean() + ")");
         if (inputs.get(0).toBoolean() && block != null) {
             Logger.getAnonymousLogger().log(Level.INFO, "WHILE LOOP [BLOCK]");
@@ -35,6 +34,22 @@ public class WhileLoopNode extends Node {
     @Override
     public void reset() {
 
+    }
+
+    @Override
+    public String represent(CodeRunner runner) {
+        String representation = this.toString() + "<";
+        Node nextRepresentationNode = block;
+        while (nextRepresentationNode != null && nextRepresentationNode != this) {
+            boolean isActive = runner.isActive(nextRepresentationNode);
+            representation += isActive ? "[" : " ";
+            representation += nextRepresentationNode.represent(runner);
+            representation += isActive ? "]" : " ";
+
+            nextRepresentationNode = nextRepresentationNode.next;
+        }
+
+        return representation + ">";
     }
 
     @Override

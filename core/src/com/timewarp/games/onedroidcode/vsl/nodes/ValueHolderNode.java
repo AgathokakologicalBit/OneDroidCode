@@ -9,7 +9,7 @@ import java.util.logging.Logger;
 
 public class ValueHolderNode extends Node {
 
-    public ValueHolderNode(Node next, String type) {
+    public ValueHolderNode(Node next, int type) {
         super(next);
 
         outputs.add(new Value(type));
@@ -24,6 +24,12 @@ public class ValueHolderNode extends Node {
     @Override
     public void reset() {
         outputs.get(0).value = null;
+    }
+
+
+    @Override
+    public String represent(CodeRunner runner) {
+        return this.toString();
     }
 
     @Override

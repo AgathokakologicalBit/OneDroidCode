@@ -22,8 +22,10 @@ public abstract class Node {
         this.next = node;
     }
 
+    public abstract String represent(CodeRunner runner);
+
     @Override
     public String toString() {
-        return "[?]()";
+        return "(...)";
     }
 }
