@@ -10,6 +10,8 @@ import java.util.LinkedList;
 
 public class LevelGrid {
 
+    public static final int TILE_SIZE = 128;
+
     private int width, height;
 
     private TextureRegion[][] floor;
@@ -43,13 +45,21 @@ public class LevelGrid {
         for (int y = 0; y < height; ++y) {
             for (int x = 0; x < width; ++x) {
                 if (floor[y][x] != null) {
-                    GUI.DrawTextureRegion(floor[y][x], x * 128, y * 128, 128, 128);
+                    GUI.DrawTextureRegion(
+                            floor[y][x],
+                            x * TILE_SIZE, y * TILE_SIZE,
+                            TILE_SIZE, TILE_SIZE
+                    );
                 }
             }
         }
 
         for (TObject obj : objects) {
-            GUI.DrawTextureRegion(obj.texture, obj.x * 128, obj.y * 128, 128, 128, getRotation(obj));
+            GUI.DrawTextureRegion(
+                    obj.texture,
+                    obj.x * TILE_SIZE, obj.y * TILE_SIZE,
+                    TILE_SIZE, TILE_SIZE, getRotation(obj)
+            );
         }
     }
 
@@ -69,11 +79,12 @@ public class LevelGrid {
     }
 
     public void set(int x, int y, int type) {
-        floor[y][x] = AssetManager.floorTiledStoneTexture;
+        floor[y][x] = AssetManager.floorStoneTexture;
     }
 
     public TObject[] findObjectsByPos(int x, int y) {
         LinkedList<TObject> positionedObjects = new LinkedList<TObject>();
+
         for (TObject obj : objects)
             if (obj.x == x && obj.y == y)
                 positionedObjects.add(obj);
@@ -95,6 +106,18 @@ public class LevelGrid {
                 return obj;
 
         return null;
+    }
+
+
+    @SuppressWarnings({"unchecked", "SuspiciousToArrayCall"})
+    public <TTO extends TObject> TTO[] findObjectsByType(Class<TTO> type) {
+        LinkedList<TTO> typedObjects = new LinkedList<TTO>();
+
+        for (TObject obj : objects)
+            if (type.isAssignableFrom(obj.getClass()))
+                typedObjects.add((TTO) obj);
+
+        return (TTO[]) typedObjects.toArray(new Object[typedObjects.size()]);
     }
 
 
@@ -150,5 +173,15 @@ public class LevelGrid {
 
     public boolean moveBy(TObject obj, int byX, int byY) {
         return move(obj, obj.x + byX, obj.y + byY);
+    }
+
+    public boolean add(TObject object, int x, int y) {
+
+        if (object.solid && isObjectSolid(x, y)) return false;
+        this.objects.add(object);
+        object.x = x;
+        object.y = y;
+
+        return true;
     }
 }

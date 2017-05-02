@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 
 public class TextRenderingNode extends Node {
 
+    public Value inText;
     private UITextbox textbox;
 
     public TextRenderingNode(Node next, UITextbox textbox) {
@@ -17,15 +18,17 @@ public class TextRenderingNode extends Node {
 
         this.textbox = textbox;
 
-        this.inputs.add(new Value(Value.TYPE_ANY));
+        inText = new Value(Value.TYPE_ANY);
     }
 
     @Override
     public Node execute(CodeRunner runner) {
         Logger.getAnonymousLogger().log(Level.INFO, "RENDERING [TRY]");
         if (textbox == null) return next;
-        Logger.getAnonymousLogger().log(Level.INFO, "RENDERING [SET](" + inputs.get(0).value.toString() + ")");
-        textbox.text.set(inputs.get(0).toString());
+
+        Logger.getAnonymousLogger().log(Level.INFO, "RENDERING [SET](" + inText.value.toString() + ")");
+        textbox.text.set(inText.toString());
+
         return next;
     }
 

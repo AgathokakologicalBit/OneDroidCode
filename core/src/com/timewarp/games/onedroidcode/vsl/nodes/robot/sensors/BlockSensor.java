@@ -5,15 +5,19 @@ import com.timewarp.games.onedroidcode.vsl.Node;
 import com.timewarp.games.onedroidcode.vsl.Value;
 
 public class BlockSensor extends Node {
+
+    public Value outBlockExists;
+
     public BlockSensor(Node next) {
         super(next);
 
-        outputs.add(new Value(Value.TYPE_BOOLEAN));
+        outBlockExists = new Value(Value.TYPE_BOOLEAN);
     }
 
     @Override
     public Node execute(CodeRunner runner) {
-        return null;
+        // TODO: Check block in front of player
+        return next;
     }
 
     @Override

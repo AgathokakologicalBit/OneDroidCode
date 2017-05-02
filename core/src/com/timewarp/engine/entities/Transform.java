@@ -51,7 +51,7 @@ public class Transform {
 
     public final void setScale (Vector2D scale) {
         Vector2D diff = this.scale.sub(this.localScale);
-        this.scale.set(scale.x, scale.y);
+        this.scale.set(scale);
         this.localScale.set(this.scale.sub(diff));
     }
 
@@ -76,6 +76,7 @@ public class Transform {
     public final void removeChild (Transform child) {
         if (!this.childs.remove(child)) return;
 
+        child.localPosition.set(position);
         child.parent = null;
     }
 

@@ -94,7 +94,7 @@ public class GUI {
      * @return Text's size in pixels
      */
     public static Vector2D getTextSize(String text, float scale) {
-        font.getData().setScale(baseTextSize / scale);
+        font.getData().setScale(scale / baseTextSize);
         layout.setText(font, text);
         return new Vector2D(layout.width, layout.height);
     }
@@ -289,7 +289,7 @@ public class GUI {
     public static void DrawText(String text, float x, float y, float width, float height, float scale, Color color) {
         final Vector2D textSize = getTextSize(text, scale);
         final float offset_left = (width - textSize.x) / 2;
-        final float offset_top = (height - textSize.y / 2) / 2;
+        final float offset_top = (height - baseTextSize) / 2;
 
         DrawText(text, x + offset_left, y + offset_top, color, scale);
     }

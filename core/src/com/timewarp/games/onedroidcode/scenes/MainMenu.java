@@ -20,9 +20,10 @@ public class MainMenu extends Scene {
     public void onResolutionChanged() {
         buttonPlay2D = GameObject.instantiate(UIButton.class);
         buttonPlay2D.transform.position.set(50, 50);
-        buttonPlay2D.transform.scale.set(400, 75);
+        buttonPlay2D.transform.scale.set(500, 100);
         buttonPlay2D.text.setTextSize(30);
         buttonPlay2D.text.set("Play `grid2D` game");
+        buttonPlay2D.text.setTextAlignment(true);
     }
 
     @Override

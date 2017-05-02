@@ -7,6 +7,7 @@ import com.timewarp.engine.entities.GameObject;
 import com.timewarp.engine.gui.GUI;
 import com.timewarp.engine.gui.controls.UITextbox;
 import com.timewarp.games.onedroidcode.level.LevelGrid;
+import com.timewarp.games.onedroidcode.objects.tiles.TWall;
 import com.timewarp.games.onedroidcode.vsl.CodeRunner;
 import com.timewarp.games.onedroidcode.vsl.Node;
 import com.timewarp.games.onedroidcode.vsl.Value;
@@ -47,6 +48,7 @@ public class GameGridScene extends Scene {
         levelGrid.set(2, 0, 0);
         levelGrid.set(2, 1, 0);
         levelGrid.set(2, 2, 0);
+        levelGrid.add(new TWall(), 3, 0);
         levelGrid.player.x = 1;
 
 
@@ -58,16 +60,15 @@ public class GameGridScene extends Scene {
         TextRenderingNode textRenderingNode = new TextRenderingNode(null, outputTextbox);
 
         final WhileLoopNode loop = new WhileLoopNode(null);
-        loop.inputs.get(0).set(true);
-        loop.block = new Node(textRenderingNode) {
-            {
-                outputs.add(new Value(Value.TYPE_INTEGER));
-                outputs.get(0).set(0);
-            }
+        loop.inCondition.set(true);
 
+        final Value switchOutValue = new Value(Value.TYPE_INTEGER);
+        loop.outBlock = new Node(textRenderingNode) {
             private boolean moveRight = true;
             private int position = 1;
             private final int maxOffset = 3;
+
+            public Value outValue = switchOutValue;
 
             @Override
             public Node execute(CodeRunner runner) {
@@ -79,7 +80,7 @@ public class GameGridScene extends Scene {
                         moveRight = true;
                 }
 
-                outputs.get(0).set(position);
+                outValue.set(position);
 
                 return next;
             }
@@ -94,17 +95,17 @@ public class GameGridScene extends Scene {
             }
         };
 
-        loop.block.next.append(new MovementNode(null) {{
-            inputs.set(0, loop.block.outputs.get(0));
+        loop.outBlock.next.append(new MovementNode(null) {{
+            inHorizontal = switchOutValue;
         }});
 
-        textRenderingNode.inputs.set(0, loop.block.outputs.get(0));
+        textRenderingNode.inText = switchOutValue;
 
         code[0] = new RootNode(loop);
         codeRunner.load(code);
 
         Logger.getAnonymousLogger().log(Level.INFO, "[GameSC] Configuring update intervals");
-        Time.addCountdownRepeated("stats_update", 1f);
+        Time.addCountdownRepeated("stats_update", 0.35f);
 
         Logger.getAnonymousLogger().log(Level.INFO, "[GameSC] Starting VSL script");
         codeReprTextbox.text.set(codeRunner.getCodeRepresentation());

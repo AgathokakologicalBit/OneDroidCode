@@ -191,6 +191,7 @@ public class GameObject {
      * @param component_class Target component class
      * @return Object's component
      */
+    @SuppressWarnings("unchecked")
     public final <T extends Component> T getComponent(Class<T> component_class) {
         for (Component c : this.components) {
             if (c.getClass().equals(component_class))
@@ -204,15 +205,15 @@ public class GameObject {
      * Adds component to GameObject's components list.
      *
      * Executes 'awake' method of component on addition
-     * @param component_class Component's class that should be added
+     * @param componentClass Component's class that should be added
      * @return true if component was successfully added
      */
-    public final <T extends Component> T addComponent(Class<T> component_class) {
-        if (null != gameObject.getComponent(component_class))
+    public final <T extends Component> T addComponent(Class<T> componentClass) {
+        if (null != gameObject.getComponent(componentClass))
             return null;
 
         try {
-            T component = component_class
+            T component = componentClass
                     .getDeclaredConstructor(GameObject.class)
                     .newInstance(this);
 

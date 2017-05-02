@@ -13,9 +13,16 @@ public class Value {
     public int type;
     public Object value;
 
+
     public Value(int type) {
         this.type = type;
     }
+
+    public Value(int type, Object value) {
+        this.type = type;
+        this.value = value;
+    }
+
 
     public void set(boolean value) {
         this.value = value;

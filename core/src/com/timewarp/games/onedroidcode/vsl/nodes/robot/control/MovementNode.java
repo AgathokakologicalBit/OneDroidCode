@@ -14,25 +14,28 @@ public class MovementNode extends Node {
     private int movementVertical = 0;
     private char movementPoint = '.';
 
+    public Value inHorizontal;
+    public Value inVertical;
+
     public MovementNode(Node next) {
         super(next);
 
-        inputs.add(new Value(Value.TYPE_INTEGER));
-        inputs.add(new Value(Value.TYPE_INTEGER));
+        inHorizontal = new Value(Value.TYPE_INTEGER);
+        inVertical = new Value(Value.TYPE_INTEGER);
     }
 
     @Override
     public Node execute(CodeRunner runner) {
-        if (inputs.get(0).value != null) {
+        if (inHorizontal.value != null) {
             movementHorizontal =
-                    (inputs.get(0).toInteger() > 0 ? 1 : 0)
-                            - (inputs.get(0).toInteger() < 0 ? 1 : 0);
+                    (inHorizontal.toInteger() > 0 ? 1 : 0)
+                            - (inHorizontal.toInteger() < 0 ? 1 : 0);
         }
 
-        if (inputs.get(1).value != null) {
+        if (inVertical.value != null) {
             movementVertical =
-                    (inputs.get(1).toInteger() > 0 ? 1 : 0)
-                            - (inputs.get(1).toInteger() < 0 ? 1 : 0);
+                    (inVertical.toInteger() > 0 ? 1 : 0)
+                            - (inVertical.toInteger() < 0 ? 1 : 0);
         }
 
         if (movementHorizontal < 0) {

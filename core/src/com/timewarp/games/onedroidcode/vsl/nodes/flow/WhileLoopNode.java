@@ -9,22 +9,24 @@ import java.util.logging.Logger;
 
 public class WhileLoopNode extends Node {
 
-    public Node block;
+    public Value inCondition;
+    public Node outBlock;
 
     public WhileLoopNode(Node next) {
         super(next);
 
         // Condition
-        inputs.add(new Value(Value.TYPE_BOOLEAN));
+        inCondition = new Value(Value.TYPE_BOOLEAN);
     }
 
     @Override
     public Node execute(CodeRunner runner) {
-        Logger.getAnonymousLogger().log(Level.INFO, "WHILE LOOP [CONDITION](" + inputs.get(0).toBoolean() + ")");
-        if (inputs.get(0).toBoolean() && block != null) {
+        Logger.getAnonymousLogger().log(Level.INFO, "WHILE LOOP [CONDITION](" + inCondition.toBoolean() + ")");
+
+        if (inCondition != null && inCondition.toBoolean() && outBlock != null) {
             Logger.getAnonymousLogger().log(Level.INFO, "WHILE LOOP [BLOCK]");
             runner.pushContext(this);
-            return block;
+            return outBlock;
         }
 
         Logger.getAnonymousLogger().log(Level.INFO, "WHILE LOOP [END]");
@@ -39,7 +41,8 @@ public class WhileLoopNode extends Node {
     @Override
     public String represent(CodeRunner runner) {
         String representation = this.toString() + "<";
-        Node nextRepresentationNode = block;
+        Node nextRepresentationNode = outBlock;
+
         while (nextRepresentationNode != null && nextRepresentationNode != this) {
             boolean isActive = runner.isActive(nextRepresentationNode);
             representation += isActive ? "[" : " ";
