@@ -47,10 +47,8 @@ public abstract class Scene {
     /**
      * Running each frame if Scene is loaded
      * Recalculates states of all active objects
-     *
-     * @param deltaTime Time passed between last and current frames
      */
-    public abstract void update(double deltaTime);
+    public abstract void update();
 
     /**
      * Running each frame if Scene is loaded

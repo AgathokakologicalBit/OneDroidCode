@@ -73,20 +73,20 @@ public class Time {
         );
     }
 
-    public static boolean addTimerRepeated(String name, double secods) {
+    public static boolean addTimerRepeated(String name, double seconds) {
         return Time.addTimer(
                 name,
                 new Timer(
                         Timer.MODE_TIMER,
                         Timer.AUTOREPEAT_ENABLED,
-                        secods
+                        seconds
                 )
         );
     }
 
     public static boolean isTimerActivated(String name) {
-        if (!Time.timers.containsKey(name)) return false;
-        return Time.timers.get(name).isTimerActivated();
+        return Time.timers.containsKey(name)
+                && Time.timers.get(name).isTimerActivated();
     }
 
     public static double getTime(String timerName) {

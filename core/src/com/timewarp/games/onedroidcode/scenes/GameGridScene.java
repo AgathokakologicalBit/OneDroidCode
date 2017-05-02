@@ -127,7 +127,7 @@ public class GameGridScene extends Scene {
     }
 
     @Override
-    public void update(double deltaTime) {
+    public void update() {
         if (Time.isTimerActivated("stats_update")) {
             codeReprTextbox.text.set(codeRunner.getCodeRepresentation());
             this.codeRunner.step();

@@ -12,7 +12,6 @@ import java.util.logging.Logger;
 public class AssetManager {
 
     public static Preferences preferences;
-    private static TextureRegion[][] gameTextures;
 
 
     // ===--- TEXTURES LIST ---===
@@ -39,8 +38,8 @@ public class AssetManager {
 
         generateAnimations();
 
-        TextureRegion textureRegion = new TextureRegion(new Texture(Gdx.files.internal("textures/tiles.png")));
-        gameTextures = textureRegion.split(32, 32);
+        final TextureRegion textureRegion = new TextureRegion(new Texture(Gdx.files.internal("textures/tiles.png")));
+        final TextureRegion[][] gameTextures = textureRegion.split(32, 32);
 
         playerTexture = gameTextures[0][0];
         floorStoneTexture = gameTextures[1][0];

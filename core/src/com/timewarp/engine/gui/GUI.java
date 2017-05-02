@@ -70,21 +70,14 @@ public class GUI {
         pix.fill();
         emptyTexture = new Texture(pix);
 
-        baseTextSize = getTextSize("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()").y;
-    }
 
-
-    /**
-     * Returns size in pixels of given string
-     *
-     * @param text Target string
-     * @return Text's size in pixels
-     */
-    public static Vector2D getTextSize(String text) {
+        // CALCULATING BASE TEXT SIZE
+        final String exampleText = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()";
         font.getData().setScale(1);
-        layout.setText(font, text);
-        return new Vector2D(layout.width, layout.height);
+        layout.setText(font, exampleText);
+        baseTextSize = layout.height;
     }
+
 
     /**
      * Returns size in pixels of given string

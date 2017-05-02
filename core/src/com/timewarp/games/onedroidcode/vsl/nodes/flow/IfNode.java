@@ -34,9 +34,4 @@ public class IfNode extends Node {
     public String represent(CodeRunner runner) {
         return "IF";
     }
-
-    @Override
-    public String toString() {
-        return super.toString();
-    }
 }

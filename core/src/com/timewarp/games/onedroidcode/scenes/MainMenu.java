@@ -12,11 +12,6 @@ public class MainMenu extends Scene {
 
 
     @Override
-    public void initialize() {
-        super.initialize();
-    }
-
-    @Override
     public void onResolutionChanged() {
         buttonPlay2D = GameObject.instantiate(UIButton.class);
         buttonPlay2D.transform.position.set(50, 50);
@@ -32,7 +27,7 @@ public class MainMenu extends Scene {
     }
 
     @Override
-    public void update(double deltaTime) {
+    public void update() {
         if (buttonPlay2D.isClicked()) {
             SceneManager.instance.loadScene(new GameGridScene());
         }

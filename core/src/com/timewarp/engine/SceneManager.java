@@ -174,7 +174,7 @@ public class SceneManager {
             this.updateGameObject(gameObject);
         }
 
-        currentScene.update(Gdx.graphics.getDeltaTime());
+        currentScene.update();
         Time.resetTimer("delta_time");
     }
 
