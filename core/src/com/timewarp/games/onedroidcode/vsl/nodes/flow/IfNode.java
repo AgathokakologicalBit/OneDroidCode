@@ -11,10 +11,6 @@ public class IfNode extends Node {
     public Node onTrue, onFalse;
 
 
-    public IfNode(Node next) {
-        super(next);
-    }
-
     @Override
     public Node execute(CodeRunner runner) {
         if (inCondition == null) return next;

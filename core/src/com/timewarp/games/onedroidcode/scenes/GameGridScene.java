@@ -1,5 +1,6 @@
 package com.timewarp.games.onedroidcode.scenes;
 
+import com.timewarp.engine.Direction;
 import com.timewarp.engine.Scene;
 import com.timewarp.engine.Time;
 import com.timewarp.engine.Vector2D;
@@ -10,11 +11,10 @@ import com.timewarp.games.onedroidcode.level.LevelGrid;
 import com.timewarp.games.onedroidcode.objects.tiles.TWall;
 import com.timewarp.games.onedroidcode.vsl.CodeRunner;
 import com.timewarp.games.onedroidcode.vsl.Node;
-import com.timewarp.games.onedroidcode.vsl.Value;
 import com.timewarp.games.onedroidcode.vsl.nodes.RootNode;
 import com.timewarp.games.onedroidcode.vsl.nodes.flow.WhileLoopNode;
-import com.timewarp.games.onedroidcode.vsl.nodes.io.TextRenderingNode;
 import com.timewarp.games.onedroidcode.vsl.nodes.robot.control.MovementNode;
+import com.timewarp.games.onedroidcode.vsl.nodes.robot.control.RotationNode;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -43,65 +43,53 @@ public class GameGridScene extends Scene {
 
         Logger.getAnonymousLogger().log(Level.INFO, "[GameSC] Loading level");
         levelGrid = new LevelGrid(10, 10);
-        levelGrid.set(0, 0, 0);
-        levelGrid.set(1, 0, 0);
-        levelGrid.set(2, 0, 0);
         levelGrid.set(2, 1, 0);
         levelGrid.set(2, 2, 0);
-        levelGrid.add(new TWall(), 3, 0);
-        levelGrid.player.x = 1;
+        levelGrid.set(2, 3, 0);
+        levelGrid.set(3, 1, 0);
+        levelGrid.set(3, 3, 0);
+        levelGrid.set(4, 1, 0);
+        levelGrid.set(4, 2, 0);
+        levelGrid.set(4, 3, 0);
+        levelGrid.add(new TWall(), 3, 2);
+
+        levelGrid.player.x = 2;
+        levelGrid.player.y = 1;
+        levelGrid.player.rotateBy(Direction.RIGHT);
 
 
         Logger.getAnonymousLogger().log(Level.INFO, "[GameSC] Starting VSL code runner");
         codeRunner = new CodeRunner();
 
-        Node[] code = new Node[1];
-
-        TextRenderingNode textRenderingNode = new TextRenderingNode(null, outputTextbox);
+        final RootNode rootNode = new RootNode();
 
         final WhileLoopNode loop = new WhileLoopNode(null);
         loop.inCondition.set(true);
 
-        final Value switchOutValue = new Value(Value.TYPE_INTEGER);
-        loop.outBlock = new Node(textRenderingNode) {
-            private boolean moveRight = true;
-            private int position = 1;
-            private final int maxOffset = 3;
+        final MovementNode movement1 = new MovementNode();
+        movement1.inVertical.set(1);
+        final MovementNode movement2 = new MovementNode();
+        movement2.inVertical.set(1);
 
-            public Value outValue = switchOutValue;
+        final RotationNode rotation = new RotationNode();
+        rotation.inRotation.set(1);
 
-            @Override
-            public Node execute(CodeRunner runner) {
-                if (moveRight) {
-                    if ((position += 2) >= maxOffset)
-                        moveRight = false;
-                } else {
-                    if ((position -= 2) <= -maxOffset)
-                        moveRight = true;
-                }
 
-                outValue.set(position);
+        rootNode.append(loop);
 
-                return next;
-            }
+        loop.outBlock = movement1;
+        movement1
+                .append(movement2)
+                .append(rotation);
 
-            @Override
-            public void reset() {
-            }
-
-            @Override
-            public String represent(CodeRunner runner) {
-                return "SWITCH";
-            }
+        final Node[] code = new Node[]{
+                rootNode,
+                loop,
+                movement1,
+                movement2,
+                rotation
         };
 
-        loop.outBlock.next.append(new MovementNode(null) {{
-            inHorizontal = switchOutValue;
-        }});
-
-        textRenderingNode.inText = switchOutValue;
-
-        code[0] = new RootNode(loop);
         codeRunner.load(code);
 
         Logger.getAnonymousLogger().log(Level.INFO, "[GameSC] Configuring update intervals");
@@ -109,7 +97,6 @@ public class GameGridScene extends Scene {
 
         Logger.getAnonymousLogger().log(Level.INFO, "[GameSC] Starting VSL script");
         codeReprTextbox.text.set(codeRunner.getCodeRepresentation());
-        codeRunner.step();
     }
 
     @Override

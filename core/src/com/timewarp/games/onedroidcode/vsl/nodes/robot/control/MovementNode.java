@@ -1,5 +1,7 @@
 package com.timewarp.games.onedroidcode.vsl.nodes.robot.control;
 
+import com.timewarp.engine.Direction;
+import com.timewarp.engine.Vector2D;
 import com.timewarp.games.onedroidcode.level.LevelGrid;
 import com.timewarp.games.onedroidcode.vsl.CodeRunner;
 import com.timewarp.games.onedroidcode.vsl.Node;
@@ -12,59 +14,35 @@ public class MovementNode extends Node {
 
     private int movementHorizontal = 0;
     private int movementVertical = 0;
-    private char movementPoint = '.';
 
     public Value inHorizontal;
     public Value inVertical;
 
-    public MovementNode(Node next) {
-        super(next);
-
+    public MovementNode() {
         inHorizontal = new Value(Value.TYPE_INTEGER);
         inVertical = new Value(Value.TYPE_INTEGER);
     }
 
     @Override
     public Node execute(CodeRunner runner) {
-        if (inHorizontal.value != null) {
-            movementHorizontal =
-                    (inHorizontal.toInteger() > 0 ? 1 : 0)
-                            - (inHorizontal.toInteger() < 0 ? 1 : 0);
-        }
+        movementHorizontal =
+                (inHorizontal.toInteger() > 0 ? 1 : 0)
+                        - (inHorizontal.toInteger() < 0 ? 1 : 0);
 
-        if (inVertical.value != null) {
-            movementVertical =
-                    (inVertical.toInteger() > 0 ? 1 : 0)
-                            - (inVertical.toInteger() < 0 ? 1 : 0);
-        }
+        movementVertical =
+                (inVertical.toInteger() < 0 ? 1 : 0)
+                        - (inVertical.toInteger() > 0 ? 1 : 0);
 
-        if (movementHorizontal < 0) {
-            if (movementVertical < 0) {
-                movementPoint = '↙';
-            } else if (movementVertical == 0) {
-                movementPoint = '<';
-            } else {
-                movementPoint = '↘';
-            }
-        } else if (movementHorizontal == 0) {
-            if (movementVertical < 0) {
-                movementPoint = 'v';
-            } else if (movementVertical > 0) {
-                movementPoint = '^';
-            }
-        } else {
-            if (movementVertical < 0) {
-                movementPoint = '↘';
-            } else if (movementVertical == 0) {
-                movementPoint = '>';
-            } else {
-                movementPoint = '↗';
-            }
-        }
+        Vector2D movementDirection = LevelGrid.instance.player.direction.rotatedBy(
+                Direction.fromVector(movementHorizontal, movementVertical)
+        ).getVector();
 
-        Logger.getAnonymousLogger().log(Level.WARNING, "MOVEMENT [DIRECTION](" + movementPoint + ")");
+        Logger.getAnonymousLogger().log(Level.WARNING, "MOVEMENT [DIRECTION]()");
 
-        LevelGrid.instance.moveBy(LevelGrid.instance.player, movementHorizontal, movementVertical);
+        LevelGrid.instance.moveBy(
+                LevelGrid.instance.player,
+                (int) movementDirection.x, (int) movementDirection.y
+        );
 
         return next;
     }
@@ -76,6 +54,6 @@ public class MovementNode extends Node {
 
     @Override
     public String represent(CodeRunner runner) {
-        return "MOVE(" + movementPoint + ")";
+        return "MOVE";
     }
 }

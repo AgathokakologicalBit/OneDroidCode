@@ -1,11 +1,18 @@
 package com.timewarp.games.onedroidcode.vsl;
 
+import com.timewarp.games.onedroidcode.vsl.types.IValueIterator;
+
 public class Value {
 
+    // ===--- BASIC TYPES ---===
     public static final int TYPE_BOOLEAN = 1;
     public static final int TYPE_INTEGER = 2;
     public static final int TYPE_DECIMAL = 4;
     public static final int TYPE_STRING = 8;
+
+    // ===--- COMPLEX TYPES ---===
+    public static final int TYPE_ITERABLE = 16;
+
 
     public static final int TYPE_ANY = 1023;
 
@@ -44,7 +51,20 @@ public class Value {
         this.type = TYPE_STRING;
     }
 
+    public void set(IValueIterator value) {
+        this.value = value;
+        this.type = TYPE_ITERABLE;
+    }
+
+    public void set(Value val) {
+        this.type = val.type;
+        this.value = val.value;
+    }
+
+
     public boolean toBoolean() {
+        if (value == null) return false;
+
         switch (type) {
             case TYPE_BOOLEAN:
                 return (Boolean) value;
@@ -60,6 +80,8 @@ public class Value {
     }
 
     public int toInteger() {
+        if (value == null) return 0;
+
         switch (type) {
             case TYPE_BOOLEAN:
                 return value.equals(false) ? 0 : 1;
@@ -74,8 +96,24 @@ public class Value {
         return 0;
     }
 
+
     public String toString() {
         if (value == null) return "";
         return value.toString();
+    }
+
+    public static Object getDefaultFor(int type) {
+        switch (type) {
+            case TYPE_BOOLEAN:
+                return false;
+            case TYPE_INTEGER:
+                return 0;
+            case TYPE_DECIMAL:
+                return 0d;
+            case TYPE_STRING:
+                return "";
+        }
+
+        return null;
     }
 }

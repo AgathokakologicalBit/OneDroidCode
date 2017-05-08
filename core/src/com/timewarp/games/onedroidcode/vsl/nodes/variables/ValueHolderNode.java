@@ -1,4 +1,4 @@
-package com.timewarp.games.onedroidcode.vsl.nodes;
+package com.timewarp.games.onedroidcode.vsl.nodes.variables;
 
 import com.timewarp.games.onedroidcode.vsl.CodeRunner;
 import com.timewarp.games.onedroidcode.vsl.Node;
@@ -10,12 +10,24 @@ import java.util.logging.Logger;
 public class ValueHolderNode extends Node {
 
     public Value outValue;
+    private Object defaultValue;
 
     public ValueHolderNode(Node next, int type) {
         super(next);
 
-        outValue = new Value(type);
+        defaultValue = Value.getDefaultFor(type);
+        outValue = new Value(type, defaultValue);
     }
+
+    public ValueHolderNode(int type) {
+        this(null, type);
+    }
+
+    public ValueHolderNode(int type, Object value) {
+        defaultValue = value;
+        outValue = new Value(type, defaultValue);
+    }
+
 
     @Override
     public Node execute(CodeRunner runner) {
@@ -25,17 +37,12 @@ public class ValueHolderNode extends Node {
 
     @Override
     public void reset() {
-        outValue.value = null;
+        outValue.value = defaultValue;
     }
 
 
     @Override
     public String represent(CodeRunner runner) {
-        return this.toString();
-    }
-
-    @Override
-    public String toString() {
         return "VAR";
     }
 }

@@ -7,7 +7,7 @@ public abstract class TObject {
 
     public TextureRegion texture;
     public int x, y;
-    public Direction direction = Direction.RIGHT;
+    public Direction direction = Direction.UP;
 
     public boolean solid = true;
 
@@ -18,5 +18,9 @@ public abstract class TObject {
 
     public boolean moveTo(int x, int y) {
         return LevelGrid.instance.move(this, x, y);
+    }
+
+    public void rotateBy(Direction direction) {
+        this.direction = this.direction.rotatedBy(direction);
     }
 }

@@ -8,10 +8,6 @@ import java.util.logging.Logger;
 
 public final class RootNode extends Node {
 
-    public RootNode(Node next) {
-        super(next);
-    }
-
     @Override
     public Node execute(CodeRunner runner) {
         Logger.getAnonymousLogger().log(Level.INFO, "ROOT ELEMENT");
@@ -26,11 +22,6 @@ public final class RootNode extends Node {
 
     @Override
     public String represent(CodeRunner runner) {
-        return this.toString();
-    }
-
-    @Override
-    public String toString() {
         return "<.>";
     }
 }

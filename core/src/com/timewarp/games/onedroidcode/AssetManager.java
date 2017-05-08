@@ -18,10 +18,10 @@ public class AssetManager {
     public static TextureRegion playerTexture;
 
     // =- FLOOR TILES -=
-    public static TextureRegion floorStoneTexture;
+    public static TextureRegion floorGrassTexture;
 
     // =- WALL TILES -=
-    public static TextureRegion wallYellowTexture;
+    public static TextureRegion wallStoneTexture;
 
 
     public static void unloadAssets()
@@ -42,8 +42,8 @@ public class AssetManager {
         final TextureRegion[][] gameTextures = textureRegion.split(32, 32);
 
         playerTexture = gameTextures[0][0];
-        floorStoneTexture = gameTextures[1][0];
-        wallYellowTexture = gameTextures[2][0];
+        floorGrassTexture = gameTextures[1][0];
+        wallStoneTexture = gameTextures[2][0];
 
         Logger.getAnonymousLogger().log(Level.INFO, "Successfully loaded all assets");
     }

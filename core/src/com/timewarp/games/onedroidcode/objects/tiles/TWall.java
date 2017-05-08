@@ -6,7 +6,7 @@ import com.timewarp.games.onedroidcode.level.TObject;
 public class TWall extends TObject {
 
     public TWall() {
-        this.texture = AssetManager.wallYellowTexture;
+        this.texture = AssetManager.wallStoneTexture;
         this.solid = true;
     }
 

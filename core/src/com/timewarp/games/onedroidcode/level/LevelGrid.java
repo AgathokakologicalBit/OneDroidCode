@@ -1,7 +1,6 @@
 package com.timewarp.games.onedroidcode.level;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.timewarp.engine.Direction;
 import com.timewarp.engine.gui.GUI;
 import com.timewarp.games.onedroidcode.AssetManager;
 import com.timewarp.games.onedroidcode.objects.Player;
@@ -73,13 +72,22 @@ public class LevelGrid {
                 return -90;
             case LEFT:
                 return 90;
+
+            case UP_RIGHT:
+                return -45;
+            case UP_LEFT:
+                return 45;
+            case DOWN_LEFT:
+                return 135;
+            case DOWN_RIGHT:
+                return -135;
         }
 
         return 0;
     }
 
     public void set(int x, int y, int type) {
-        floor[y][x] = AssetManager.floorStoneTexture;
+        floor[y][x] = AssetManager.floorGrassTexture;
     }
 
     public TObject[] findObjectsByPos(int x, int y) {
@@ -135,29 +143,6 @@ public class LevelGrid {
 
         boolean tileIsEmpty = isTileEmpty(toX, toY);
 
-        int diffX = Math.min(Math.max(toX - obj.x, -1), 1);
-        int diffY = Math.min(Math.max(toY - obj.y, -1), 1);
-        int diff = diffX + diffY * 10;
-
-        switch (diff) {
-            case 0:
-                obj.direction = Direction.EMPTY;
-                break;
-
-            case 1:
-                obj.direction = Direction.RIGHT;
-                break;
-            case -1:
-                obj.direction = Direction.LEFT;
-                break;
-            case 10:
-                obj.direction = Direction.DOWN;
-                break;
-            case -10:
-                obj.direction = Direction.UP;
-                break;
-        }
-
         obj.x = toX;
         obj.y = toY;
         if (tileIsEmpty) return true;
@@ -176,8 +161,9 @@ public class LevelGrid {
     }
 
     public boolean add(TObject object, int x, int y) {
+        if (object.solid && isObjectSolid(x, y))
+            return false;
 
-        if (object.solid && isObjectSolid(x, y)) return false;
         this.objects.add(object);
         object.x = x;
         object.y = y;

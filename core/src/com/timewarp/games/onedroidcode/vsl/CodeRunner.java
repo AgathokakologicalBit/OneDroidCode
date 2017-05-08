@@ -14,38 +14,66 @@ public class CodeRunner {
 
     private LinkedList<Node> contexts;
 
-    public void load(Node[] code) {
-        this.code = code;
-        startNode = findEntrancePointNode();
+    public CodeRunner() {
         contexts = new LinkedList<Node>();
-
-        reset();
     }
 
+    /**
+     * Loads code into VSL Runner
+     *
+     * @param code Target code
+     */
+    public boolean load(Node[] code) {
+        this.code = code;
+        startNode = findEntrancePointNode();
+
+        reset();
+
+        // If code was loaded successfully
+        // it must have a root node
+        return startNode != null;
+    }
+
+    /**
+     * Resets all nodes values
+     * Sets pointer to beginning of script
+     */
     public void reset() {
         for (Node node: code)
             node.reset();
+
         nextNode = startNode;
         contexts.clear();
     }
 
-    public void step() {
-        if (nextNode == null) return;
+    /**
+     * Executes current pointing node
+     * calculates next target node
+     */
+    public boolean step() {
+        if (nextNode == null) return false;
         nextNode = nextNode.execute(this);
 
-        if (nextNode != null) return;
+        if (nextNode != null) return true;
         if (!contexts.isEmpty()) {
             nextNode = contexts.getLast();
             contexts.removeLast();
-            return;
+            return true;
         }
 
         Logger.getAnonymousLogger().log(Level.INFO, "FINISHED SCRIPT EXECUTION");
+        return false;
     }
 
+    /**
+     * Adds given node to 'context stack'
+     * After last step(node returned null) it will get back to top context node
+     * @param context Node to push to context stack
+     */
     public void pushContext(Node context) {
         contexts.add(context);
     }
+
 
     private Node findEntrancePointNode() {
         for (Node node : code) {
@@ -56,6 +84,12 @@ public class CodeRunner {
         return null;
     }
 
+
+    /**
+     * Returns current state of node
+     * @param node Target node
+     * @return true - if current node is executing by VSL Runner
+     */
     public boolean isActive(Node node) {
         if (nextNode == node) return true;
 
@@ -66,6 +100,10 @@ public class CodeRunner {
         return false;
     }
 
+    /**
+     * Converts Nodes array to String
+     * @return String representation of code
+     */
     public String getCodeRepresentation() {
         String representation = "";
         Node next = startNode;
@@ -80,5 +118,10 @@ public class CodeRunner {
         }
 
         return representation;
+    }
+
+
+    public Node getActiveNode() {
+        return this.nextNode;
     }
 }
