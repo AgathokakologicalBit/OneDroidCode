@@ -44,7 +44,7 @@ public class GameObject {
 
     protected GameObject() {}
 
-    protected void init() {
+    public void init() {
         this.isActive = true;
 
         this.touchStart = new Vector2D();
@@ -57,7 +57,7 @@ public class GameObject {
         this.isClicked = false;
         this.isLongClicked = false;
 
-        this.animator = new Animator();
+        this.animator = new Animator(this.transform);
 
         this.components = new ArrayList<Component>(2);
         this.componentsInitList = new ArrayList<Component>(2);
@@ -69,7 +69,7 @@ public class GameObject {
     /**
      * Runs every frame if Entity is active
      */
-    public final void update() {
+    public void update() {
         final float deltaTime = Time.getDeltaTime();
 
         this.updateAnimationState(deltaTime);
@@ -135,13 +135,9 @@ public class GameObject {
         if (data == null) return;
 
         // update control size and position
-        if (data.isRelative()) {
-            this.transform.moveBy(data.position);
-            this.transform.increaseScale(data.size);
-        } else {
-            this.transform.moveTo(data.position);
-            this.transform.setScale(data.size);
-        }
+        this.transform.moveTo(data.position);
+        this.transform.setScale(data.size);
+        this.transform.setRotation(data.rotation);
     }
 
     public final void render() {

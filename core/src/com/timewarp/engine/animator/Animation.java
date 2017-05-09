@@ -20,7 +20,7 @@ public class Animation {
     public final String name;
 
     // List of animation frames
-    private ArrayList<AnimationStepData> steps;
+    public ArrayList<AnimationStepData> steps;
     // List of animation events
     private ArrayList<AnimationEvent> events;
 
@@ -77,6 +77,7 @@ public class Animation {
         // Calculate new state
         data.position = Mathf.lerp(left.position, right.position, step);
         data.size = Mathf.lerp(left.size, right.size, step);
+        data.rotation = Mathf.lerp(left.rotation, right.rotation, step);
 
         return data;
     }
@@ -131,5 +132,19 @@ public class Animation {
      */
     public void addEvent(float time, String eventName) {
         this.events.add(new AnimationEvent(time, eventName));
+    }
+
+    public boolean isRelative() {
+        return this.isRelative;
+    }
+
+    public Animation copy() {
+        final Animation anim = new Animation(this.name, FROM_CUSTOM_POINT, this.isRelative);
+
+        for (AnimationStepData step : this.steps) {
+            anim.addStep(step.time, step.copy());
+        }
+
+        return anim;
     }
 }

@@ -1,6 +1,7 @@
 package com.timewarp.games.onedroidcode.level;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.timewarp.engine.Direction;
 import com.timewarp.engine.gui.GUI;
 import com.timewarp.games.onedroidcode.AssetManager;
 import com.timewarp.games.onedroidcode.objects.Player;
@@ -23,20 +24,31 @@ public class LevelGrid {
 
 
     public LevelGrid(int width, int height) {
+        LevelGrid.instance = this;
+
         this.width = width;
         this.height = height;
 
         this.floor = new TextureRegion[height][width];
         this.objects = new LinkedList<TObject>();
 
-        this.objects.add(this.player = new Player());
+        this.add(this.player = new Player(), 0, 0);
 
-        LevelGrid.instance = this;
+        for (int y = 0; y < height; ++y)
+            for (int x = 0; x < width; ++x)
+                this.set(x, y, 0);
     }
 
     public void update() {
         for (TObject obj : objects) {
             obj.update();
+            if (obj.animator.isPlaying()) continue;
+
+            // Object position is FLOAT
+            // but getX/getY returns INTEGER value
+            // for grid support
+            obj.setX(obj.getX());
+            obj.setY(obj.getY());
         }
     }
 
@@ -56,34 +68,10 @@ public class LevelGrid {
         for (TObject obj : objects) {
             GUI.DrawTextureRegion(
                     obj.texture,
-                    obj.x * TILE_SIZE, obj.y * TILE_SIZE,
-                    TILE_SIZE, TILE_SIZE, getRotation(obj)
+                    obj.transform.position.x * TILE_SIZE, obj.transform.position.y * TILE_SIZE,
+                    TILE_SIZE, TILE_SIZE, obj.transform.rotation
             );
         }
-    }
-
-    private float getRotation(TObject obj) {
-        switch (obj.direction) {
-            case DOWN:
-                return 180;
-            case UP:
-                return 0;
-            case RIGHT:
-                return -90;
-            case LEFT:
-                return 90;
-
-            case UP_RIGHT:
-                return -45;
-            case UP_LEFT:
-                return 45;
-            case DOWN_LEFT:
-                return 135;
-            case DOWN_RIGHT:
-                return -135;
-        }
-
-        return 0;
     }
 
     public void set(int x, int y, int type) {
@@ -94,7 +82,7 @@ public class LevelGrid {
         LinkedList<TObject> positionedObjects = new LinkedList<TObject>();
 
         for (TObject obj : objects)
-            if (obj.x == x && obj.y == y)
+            if (obj.getX() == x && obj.getY() == y)
                 positionedObjects.add(obj);
 
         return positionedObjects.toArray(new TObject[positionedObjects.size()]);
@@ -102,7 +90,7 @@ public class LevelGrid {
 
     public TObject findObjectByPos(int x, int y) {
         for (TObject obj : objects)
-            if (obj.x == x && obj.y == y)
+            if (obj.getX() == x && obj.getY() == y)
                 return obj;
 
         return null;
@@ -110,7 +98,7 @@ public class LevelGrid {
 
     public TObject findSolidObjectByPos(int x, int y) {
         for (TObject obj : objects)
-            if (obj.solid && obj.x == x && obj.y == y)
+            if (obj.solid && obj.getX() == x && obj.getY() == y)
                 return obj;
 
         return null;
@@ -143,8 +131,8 @@ public class LevelGrid {
 
         boolean tileIsEmpty = isTileEmpty(toX, toY);
 
-        obj.x = toX;
-        obj.y = toY;
+        obj.animator.playAnimation("move_" + Direction.fromVector(toX - obj.getX(), toY - obj.getY()).toString());
+
         if (tileIsEmpty) return true;
 
         TObject[] targetTiles = findObjectsByPos(toX, toY);
@@ -157,7 +145,7 @@ public class LevelGrid {
     }
 
     public boolean moveBy(TObject obj, int byX, int byY) {
-        return move(obj, obj.x + byX, obj.y + byY);
+        return move(obj, obj.getX() + byX, obj.getY() + byY);
     }
 
     public boolean add(TObject object, int x, int y) {
@@ -165,9 +153,18 @@ public class LevelGrid {
             return false;
 
         this.objects.add(object);
-        object.x = x;
-        object.y = y;
+        object.transform.position.set(x, y);
+        object.init();
 
         return true;
+    }
+
+    public boolean isAnimated() {
+        for (TObject obj : objects) {
+            if (obj.animator.isPlaying()) {
+                return true;
+            }
+        }
+        return false;
     }
 }

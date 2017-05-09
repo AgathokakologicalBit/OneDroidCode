@@ -1,6 +1,7 @@
 package com.timewarp.engine.animator;
 
 import com.timewarp.engine.Math.Mathf;
+import com.timewarp.engine.entities.Transform;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -17,6 +18,8 @@ public class Animator {
 
     private float playTime = 0;
 
+    private Transform transform;
+
     /**
      * Initializes Animator with empty animations list
      */
@@ -24,11 +27,13 @@ public class Animator {
         animations = new ArrayList<Animation>(10);
     }
 
-    public Animator() {
+    public Animator(Transform transform) {
         this.animationQueue = new LinkedList<Animation>();
         this.occurredEvents = new ArrayList<AnimationEvent>(1);
 
         this.lastStep = new AnimationStepData();
+
+        this.transform = transform;
     }
 
     /**
@@ -61,9 +66,13 @@ public class Animator {
      */
     public boolean playAnimation(int index) {
         if (index < 0) return false;
-        if (Animator.animations.size() >= index) return false;
+        if (index >= Animator.animations.size()) return false;
 
-        this.animationQueue.offer(Animator.animations.get(index));
+        this.animationQueue.offer(
+                this.prepareAnimation(
+                        Animator.animations.get(index).copy()
+                )
+        );
         this.isPlaying = true;
 
         return true;
@@ -75,13 +84,14 @@ public class Animator {
      * @return Is animation was added to queue
      */
     public boolean playAnimation(String name) {
+        int index = 0;
         for (Animation anim : animations) {
             if (anim.name.equals(name)) {
-                animationQueue.offer(anim);
-                this.isPlaying = true;
-
+                this.playAnimation(index);
                 return true;
             }
+
+            ++index;
         }
 
         return false;
@@ -131,11 +141,6 @@ public class Animator {
 
         // Get current animation step data
         AnimationStepData data = animation.getStepData(this.playTime);
-        if (data.isRelative()) {
-            data.position = data.position.sub(lastStep.position);
-            data.size = data.size.sub(lastStep.size);
-        }
-
         // Get all events that occurred on this step
         this.occurredEvents = animation.getOccurredEvents(this.playTime - deltaTime, this.playTime);
 
@@ -188,5 +193,17 @@ public class Animator {
      */
     public static void add(Animation animation) {
         animations.add(animation);
+    }
+
+    private Animation prepareAnimation(Animation anim) {
+        if (!anim.isRelative()) return anim;
+
+        for (AnimationStepData step : anim.steps) {
+            step.position.set(step.position.add(transform.position));
+            step.size.set(step.size.add(transform.scale));
+            step.rotation += transform.rotation;
+        }
+
+        return anim;
     }
 }

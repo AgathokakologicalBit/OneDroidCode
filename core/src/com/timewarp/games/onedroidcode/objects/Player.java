@@ -11,6 +11,6 @@ public class Player extends TObject {
 
     @Override
     public void update() {
-
+        super.update();
     }
 }

@@ -9,7 +9,7 @@ public class UIPanel extends GameObject {
     public Panel panel;
 
     @Override
-    protected void init() {
+    public void init() {
         super.init();
 
         this.panel = this.addComponent(Panel.class);

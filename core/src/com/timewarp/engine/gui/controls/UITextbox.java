@@ -9,7 +9,7 @@ public class UITextbox extends GameObject {
     public Text text;
 
     @Override
-    protected void init() {
+    public void init() {
         super.init();
 
         this.text = this.addComponent(Text.class);

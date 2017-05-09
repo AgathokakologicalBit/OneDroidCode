@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.timewarp.engine.Math.Mathf;
 import com.timewarp.engine.Vector2D;
 
 public class GUI {
@@ -352,7 +353,7 @@ public class GUI {
                 width / 2, height / 2,
                 width, height,
                 1f, 1f,
-                rotation
+                rotation * 180 / Mathf.PI
         );
     }
 

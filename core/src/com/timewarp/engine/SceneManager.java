@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.timewarp.engine.animator.Animator;
 import com.timewarp.engine.configs.ProjectConfig;
@@ -30,7 +29,7 @@ public class SceneManager {
     private Scene currentScene;
 
     private OrthographicCamera orthographicCamera;
-    private PerspectiveCamera perspectiveCamera;
+    // private PerspectiveCamera perspectiveCamera;
 
     private int fps = 0;
     private float fpsCheckTimer = 1f;
@@ -72,7 +71,7 @@ public class SceneManager {
 
         // Create new camera
         orthographicCamera = new OrthographicCamera(GUI.Width, GUI.Height);
-        perspectiveCamera = new PerspectiveCamera(70, GUI.Width, GUI.Height);
+        // perspectiveCamera = new PerspectiveCamera(70, GUI.Width, GUI.Height);
 
         // Load assets
         Animator.Init();
@@ -195,7 +194,7 @@ public class SceneManager {
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 
         // update 3D camera and render scene
-        perspectiveCamera.update();
+        // perspectiveCamera.update();
 
         // render GUI
         orthographicCamera.update();

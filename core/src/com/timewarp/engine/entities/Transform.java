@@ -17,7 +17,7 @@ public class Transform {
 
     public final Vector2D localPosition;
     public final Vector2D localScale;
-    public final float localRotation;
+    public float localRotation;
 
     // Have no support at this moment
     public Transform parent;
@@ -39,7 +39,7 @@ public class Transform {
     }
 
     public final void moveTo (Vector2D position) {
-        Vector2D diff = this.position.sub(this.localPosition);
+        final Vector2D diff = this.position.sub(this.localPosition);
         this.position.set(position.x, position.y);
         this.localPosition.set(this.position.sub(diff));
     }
@@ -50,7 +50,7 @@ public class Transform {
     }
 
     public final void setScale (Vector2D scale) {
-        Vector2D diff = this.scale.sub(this.localScale);
+        final Vector2D diff = this.scale.sub(this.localScale);
         this.scale.set(scale);
         this.localScale.set(this.scale.sub(diff));
     }
@@ -59,6 +59,18 @@ public class Transform {
         this.scale.set(this.scale.add(scale));
         this.localScale.set(this.localScale.add(scale));
     }
+
+    public void setRotation(float rotation) {
+        final float diff = this.rotation - this.localRotation;
+        this.rotation = rotation;
+        this.localRotation = this.rotation - diff;
+    }
+
+    public void rotateBy(float rotation) {
+        this.rotation += rotation;
+        this.localRotation += rotation;
+    }
+
 
 
     public final void addChild (Transform child) {
@@ -69,8 +81,13 @@ public class Transform {
 
     public final void setParent (Transform parent) {
         final Vector2D oldPos = this.parent == null ? new Vector2D() : this.parent.position;
-        parent.addChild(this);
-        this.moveBy(parent.position.sub(oldPos));
+        final float oldRotation = this.parent == null ? 0 : this.parent.rotation;
+
+        this.parent.addChild(this);
+
+        this.moveBy(this.parent.position.sub(oldPos));
+        this.localScale.set(this.scale.div(this.parent.scale));
+        this.rotateBy(this.parent.rotation - oldRotation);
     }
 
     public final void removeChild (Transform child) {

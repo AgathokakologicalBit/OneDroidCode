@@ -11,7 +11,7 @@ public class UIButton extends GameObject {
     public Panel panel;
 
     @Override
-    protected void init() {
+    public void init() {
         super.init();
 
         this.text = this.addComponent(Text.class);

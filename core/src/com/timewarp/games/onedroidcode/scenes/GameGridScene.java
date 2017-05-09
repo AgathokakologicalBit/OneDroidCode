@@ -43,18 +43,10 @@ public class GameGridScene extends Scene {
 
         Logger.getAnonymousLogger().log(Level.INFO, "[GameSC] Loading level");
         levelGrid = new LevelGrid(10, 10);
-        levelGrid.set(2, 1, 0);
-        levelGrid.set(2, 2, 0);
-        levelGrid.set(2, 3, 0);
-        levelGrid.set(3, 1, 0);
-        levelGrid.set(3, 3, 0);
-        levelGrid.set(4, 1, 0);
-        levelGrid.set(4, 2, 0);
-        levelGrid.set(4, 3, 0);
         levelGrid.add(new TWall(), 3, 2);
 
-        levelGrid.player.x = 2;
-        levelGrid.player.y = 1;
+        levelGrid.player.setX(2);
+        levelGrid.player.setY(1);
         levelGrid.player.rotateBy(Direction.RIGHT);
 
 
@@ -93,7 +85,7 @@ public class GameGridScene extends Scene {
         codeRunner.load(code);
 
         Logger.getAnonymousLogger().log(Level.INFO, "[GameSC] Configuring update intervals");
-        Time.addCountdownRepeated("stats_update", 0.35f);
+        Time.addCountdownRepeated("codeRunner_tick", 0.0001f);
 
         Logger.getAnonymousLogger().log(Level.INFO, "[GameSC] Starting VSL script");
         codeReprTextbox.text.set(codeRunner.getCodeRepresentation());
@@ -115,7 +107,8 @@ public class GameGridScene extends Scene {
 
     @Override
     public void update() {
-        if (Time.isTimerActivated("stats_update")) {
+        LevelGrid.instance.update();
+        if (Time.isTimerActivated("codeRunner_tick") && !LevelGrid.instance.isAnimated()) {
             codeReprTextbox.text.set(codeRunner.getCodeRepresentation());
             this.codeRunner.step();
         }
