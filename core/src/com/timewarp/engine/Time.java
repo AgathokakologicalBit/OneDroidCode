@@ -84,7 +84,7 @@ public class Time {
         );
     }
 
-    public static boolean isTimerActivated(String name) {
+    public static boolean isActivated(String name) {
         return Time.timers.containsKey(name)
                 && Time.timers.get(name).isTimerActivated();
     }

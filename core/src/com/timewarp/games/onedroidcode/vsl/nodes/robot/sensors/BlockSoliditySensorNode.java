@@ -4,11 +4,11 @@ import com.timewarp.games.onedroidcode.vsl.CodeRunner;
 import com.timewarp.games.onedroidcode.vsl.Node;
 import com.timewarp.games.onedroidcode.vsl.Value;
 
-public class BlockSensor extends Node {
+public class BlockSoliditySensorNode extends Node {
 
     public Value outBlockExists;
 
-    public BlockSensor(Node next) {
+    public BlockSoliditySensorNode(Node next) {
         super(next);
 
         outBlockExists = new Value(Value.TYPE_BOOLEAN);
