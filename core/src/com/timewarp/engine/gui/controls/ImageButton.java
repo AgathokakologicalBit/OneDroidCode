@@ -5,10 +5,6 @@ import com.timewarp.engine.entities.GameObject;
 public class ImageButton extends GameObject {
     // public Texture backgroundTexture;
 
-    protected ImageButton(){
-        throw new RuntimeException("Class is not supported at this moment");
-    }
-
     /*
     @Override
     public void render() {

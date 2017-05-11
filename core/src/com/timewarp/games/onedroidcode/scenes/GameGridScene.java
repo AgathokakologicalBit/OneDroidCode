@@ -51,9 +51,11 @@ public class GameGridScene extends Scene {
         super.initialize();
 
         Logger.getAnonymousLogger().log(Level.INFO, "[GameGridSC] Placing objects");
-        generateUI();
+
         loadLevel();
         initializeVSL();
+
+        generateUI();
 
         // codeReprTextbox = GameObject.instantiate(UITextbox.class);
         // codeReprTextbox.text.setTextSize(30);
@@ -68,6 +70,8 @@ public class GameGridScene extends Scene {
         Logger.getAnonymousLogger().log(Level.INFO, "[GameSC] Starting VSL script");
         isVslRunning = true;
         // codeReprTextbox.text.set(codeRunner.getCodeRepresentation());
+
+        VSLEditorScene.previousLevelScene = this;
     }
 
     private void generateUI() {

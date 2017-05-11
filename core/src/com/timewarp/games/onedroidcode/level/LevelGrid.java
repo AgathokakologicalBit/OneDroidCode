@@ -2,7 +2,10 @@ package com.timewarp.games.onedroidcode.level;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.timewarp.engine.Direction;
+import com.timewarp.engine.Vector2D;
+import com.timewarp.engine.entities.GameObject;
 import com.timewarp.engine.gui.GUI;
+import com.timewarp.engine.gui.controls.PictureBox;
 import com.timewarp.games.onedroidcode.AssetManager;
 import com.timewarp.games.onedroidcode.objects.Player;
 
@@ -34,10 +37,23 @@ public class LevelGrid {
 
         this.add(this.player = new Player(), 0, 0);
 
-        for (int y = 0; y < height; ++y)
-            for (int x = 0; x < width; ++x)
-                this.set(x, y, 0);
+        this.generateField(width, height);
     }
+
+    private void generateField(int width, int height) {
+        final int BLOCK_SIZE = 128;
+
+        for (int y = 0; y < height; ++y) {
+            for (int x = 0; x < width; ++x) {
+                PictureBox image = GameObject.instantiate(PictureBox.class);
+                image.transform.setScale(new Vector2D(BLOCK_SIZE, BLOCK_SIZE));
+                image.transform.moveTo(new Vector2D(x * BLOCK_SIZE, y * BLOCK_SIZE));
+
+                image.setImage(AssetManager.floorGrassTexture);
+            }
+        }
+    }
+
 
     public void update() {
         for (TObject obj : objects) {

@@ -8,6 +8,7 @@ import com.timewarp.engine.animator.AnimationStepData;
 import com.timewarp.engine.animator.Animator;
 import com.timewarp.engine.gui.GUI;
 
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 
 
@@ -42,7 +43,8 @@ public class GameObject {
      */
     public Animator animator;
 
-    protected GameObject() {}
+    public GameObject() {
+    }
 
     public void init() {
         this.isActive = true;
@@ -209,9 +211,9 @@ public class GameObject {
             return null;
 
         try {
-            T component = componentClass
-                    .getDeclaredConstructor(GameObject.class)
-                    .newInstance(this);
+            Constructor<T> constructor = componentClass.getDeclaredConstructor(GameObject.class);
+            constructor.setAccessible(true);
+            T component = constructor.newInstance(this);
 
             this.componentsInitList.add(component);
 
@@ -241,7 +243,9 @@ public class GameObject {
      */
     public static <T extends GameObject> T instantiate(Class<T> gameobjectType) {
         try {
-            T obj = gameobjectType.newInstance();
+            final Constructor<T> constructor = gameobjectType.getConstructor();
+            constructor.setAccessible(true);
+            T obj = constructor.newInstance();
             SceneManager.instance.addGameObject(obj);
 
             obj.init();

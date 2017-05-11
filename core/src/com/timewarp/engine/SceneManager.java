@@ -104,6 +104,9 @@ public class SceneManager {
             loadStartScene();
             return;
         }
+
+        GUI.resetCameraPosition();
+
         Logger.getAnonymousLogger().log(Level.INFO, "[SceneMG] Loading scene '" + scene.getClass().getSimpleName() + "'");
         fpsCheckTimer = 1f;
 
@@ -162,11 +165,14 @@ public class SceneManager {
         }
 
         // update touch state
+        if (input.isTouched() && !GUI.isLastTouched) {
+            GUI.touchStartPosition.set(input.getX(), input.getY());
+        }
+
         GUI.isLastTouched = GUI.isTouched;
         GUI.isTouched = input.isTouched();
-        if (GUI.isTouched)
-            GUI.touchPosition = new Vector2D(input.getX(), input.getY());
-        else GUI.touchPosition = new Vector2D();
+        if (GUI.isTouched) GUI.touchPosition.set(input.getX(), input.getY());
+        else GUI.touchPosition.set(0, 0);
 
 
         for (GameObject gameObject : currentScene.objects) {
@@ -200,10 +206,13 @@ public class SceneManager {
         orthographicCamera.update();
         GUI.batch.begin();
 
-        currentScene.render();
         for (GameObject gameObject : currentScene.objects) {
             this.renderGameObject(gameObject);
         }
+
+        GUI.beginStaticBlock();
+        currentScene.render();
+        GUI.endStaticBlock();
 
         Gdx.gl.glDisable(GL20.GL_BLEND);
         GUI.batch.end();

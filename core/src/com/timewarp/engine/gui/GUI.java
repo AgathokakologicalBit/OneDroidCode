@@ -21,6 +21,7 @@ public class GUI {
     public static boolean isLastTouched = false;
     public static boolean isTouched = false;
     public static Vector2D touchPosition = new Vector2D();
+    public static Vector2D touchStartPosition = new Vector2D();
 
     public static int Width;
     public static int Height;
@@ -30,6 +31,28 @@ public class GUI {
     private static GlyphLayout layout;
 
     private static float baseTextSize;
+
+
+    public static Vector2D cameraPosition = new Vector2D();
+    private static Vector2D cameraPositionLast = new Vector2D();
+
+
+    public static void resetCameraPosition() {
+        cameraPosition.set(0, 0);
+    }
+
+    public static void translateBy(Vector2D direction) {
+        cameraPosition.set(cameraPosition.add(direction));
+    }
+
+    public static void beginStaticBlock() {
+        cameraPositionLast = cameraPosition.copy();
+        cameraPosition.set(0, 0);
+    }
+
+    public static void endStaticBlock() {
+        cameraPosition = cameraPositionLast;
+    }
 
 
     /**
@@ -132,8 +155,8 @@ public class GUI {
     public static void DrawRectangle(float x, float y, float width, float height, float thickness, Color color) {
         DrawPanel(x - thickness, y - thickness, width + thickness * 2, thickness, color);
         DrawPanel(x - thickness, y + height, width + thickness * 2, thickness, color);
-        DrawPanel(x - thickness, y + thickness, thickness, height - thickness * 2, color);
-        DrawPanel(x + width, y + thickness, thickness, height - thickness * 2, color);
+        DrawPanel(x - thickness, y, thickness, height, color);
+        DrawPanel(x + width, y, thickness, height, color);
     }
 
 
@@ -181,7 +204,7 @@ public class GUI {
      */
     public static void DrawPanel(float x, float y, float width, float height, Color color) {
         batch.setColor(color);
-        batch.draw(emptyTexture, x, Height - y, width, -height);
+        batch.draw(emptyTexture, x + cameraPosition.x, Height - (y + cameraPosition.y), width, -height);
         batch.setColor(Color.WHITE);
     }
 
@@ -317,7 +340,7 @@ public class GUI {
 
         final float iscale = scale / baseTextSize;
         font.getData().setScale(iscale);
-        font.draw(batch, text, x, Height - y);
+        font.draw(batch, text, x + cameraPosition.x, Height - (y + cameraPosition.y));
     }
 
 
@@ -330,7 +353,7 @@ public class GUI {
      * @param height Texture height in pixels
      */
     public static void DrawTexture(Texture texture, float x, float y, float width, float height) {
-        batch.draw(texture, x, Height - y - height, width, height);
+        batch.draw(texture, x + cameraPosition.x, Height - (y + cameraPosition.y) - height, width, height);
     }
 
     /**
@@ -344,12 +367,12 @@ public class GUI {
     }
 
     public static void DrawTextureRegion(TextureRegion texture, float x, float y, float width, float height) {
-        batch.draw(texture, x, Height - y - height, width, height);
+        batch.draw(texture, x + cameraPosition.x, Height - (y + cameraPosition.y) - height, width, height);
     }
 
     public static void DrawTextureRegion(TextureRegion texture, float x, float y, float width, float height, float rotation) {
         batch.draw(
-                texture, x, Height - y - height,
+                texture, x + cameraPosition.x, Height - (y + cameraPosition.y) - height,
                 width / 2, height / 2,
                 width, height,
                 1f, 1f,
