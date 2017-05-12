@@ -15,7 +15,7 @@ public class LevelGrid {
 
     public static final int TILE_SIZE = 128;
 
-    private int width, height;
+    public int width, height;
 
     private TextureRegion[][] floor;
     private LinkedList<TObject> objects;
@@ -41,13 +41,11 @@ public class LevelGrid {
     }
 
     private void generateField(int width, int height) {
-        final int BLOCK_SIZE = 128;
-
         for (int y = 0; y < height; ++y) {
             for (int x = 0; x < width; ++x) {
                 PictureBox image = GameObject.instantiate(PictureBox.class);
-                image.transform.setScale(new Vector2D(BLOCK_SIZE, BLOCK_SIZE));
-                image.transform.moveTo(new Vector2D(x * BLOCK_SIZE, y * BLOCK_SIZE));
+                image.transform.setScale(new Vector2D(TILE_SIZE, TILE_SIZE));
+                image.transform.moveTo(new Vector2D(x * TILE_SIZE, y * TILE_SIZE));
 
                 image.setImage(AssetManager.floorGrassTexture);
             }
@@ -69,6 +67,7 @@ public class LevelGrid {
     }
 
     public void draw() {
+        GUI.endStaticBlock();
         for (int y = 0; y < height; ++y) {
             for (int x = 0; x < width; ++x) {
                 if (floor[y][x] != null) {
@@ -88,6 +87,7 @@ public class LevelGrid {
                     TILE_SIZE, TILE_SIZE, obj.transform.rotation
             );
         }
+        GUI.beginStaticBlock();
     }
 
     public void set(int x, int y, int type) {

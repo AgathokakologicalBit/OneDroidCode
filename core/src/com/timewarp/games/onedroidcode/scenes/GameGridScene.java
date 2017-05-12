@@ -1,6 +1,7 @@
 package com.timewarp.games.onedroidcode.scenes;
 
 import com.timewarp.engine.Direction;
+import com.timewarp.engine.Math.Mathf;
 import com.timewarp.engine.Scene;
 import com.timewarp.engine.SceneManager;
 import com.timewarp.engine.Time;
@@ -76,12 +77,15 @@ public class GameGridScene extends Scene {
 
     private void generateUI() {
         dataPanel = GameObject.instantiate(UIPanel.class);
+        dataPanel.setStatic(true);
 
         openVslEditorButton = GameObject.instantiate(UIButton.class);
+        openVslEditorButton.setStatic(true);
         openVslEditorButton.text.setTextAlignment(true);
         openVslEditorButton.text.set("edit script");
 
         switchPauseResumeVslButton = GameObject.instantiate(UIButton.class);
+        switchPauseResumeVslButton.setStatic(true);
         switchPauseResumeVslButton.text.setTextAlignment(true);
         switchPauseResumeVslButton.text.set("pause");
     }
@@ -184,11 +188,24 @@ public class GameGridScene extends Scene {
             // codeReprTextbox.text.set(codeRunner.getCodeRepresentation());
             this.codeRunner.step();
         }
+
+        this.followPlayer();
     }
+
+    private void followPlayer() {
+        float x = levelGrid.player.transform.position.x * LevelGrid.TILE_SIZE - GUI.Width / 2 + LevelGrid.TILE_SIZE / 2;
+        float y = -levelGrid.player.transform.position.y * LevelGrid.TILE_SIZE + GUI.Height / 2 - LevelGrid.TILE_SIZE / 2;
+        x = Mathf.clamp(x, 0, levelGrid.width * LevelGrid.TILE_SIZE - GUI.Width);
+        y = Mathf.clamp(y, -levelGrid.height * LevelGrid.TILE_SIZE - GUI.Height / 2, 0);
+
+        GUI.moveCamera(x, y);
+    }
+
 
     @Override
     public void render() {
         if (levelGrid == null) return;
+
         levelGrid.draw();
     }
 

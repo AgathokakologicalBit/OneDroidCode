@@ -25,6 +25,7 @@ public class GameObject {
     // Is current control is active.
     // If false then control does not renders and updates
     private boolean isActive;
+    private boolean isStatic;
 
 
     // Entity mouse state
@@ -37,6 +38,7 @@ public class GameObject {
     private boolean isClicked;
     private boolean isLongClicked;
 
+
     /**
      * Holds all animations and animation queue
      * Used to modify animation state of control
@@ -48,6 +50,7 @@ public class GameObject {
 
     public void init() {
         this.isActive = true;
+        this.isStatic = false;
 
         this.touchStart = new Vector2D();
 
@@ -168,6 +171,15 @@ public class GameObject {
     }
 
     /**
+     * Returns current rendering mode
+     *
+     * @return is control is static
+     */
+    public boolean isStatic() {
+        return this.isStatic;
+    }
+
+    /**
      * Sets new control state
      * @param state new control state
      */
@@ -181,6 +193,15 @@ public class GameObject {
         this.isLongClicked = false;
         this.isLastLongClicked = false;
         this.isLastPressed = false;
+    }
+
+    /**
+     * Sets new dynamic/static rendering mode
+     *
+     * @param isStatic new rendering mode
+     */
+    public void setStatic(boolean isStatic) {
+        this.isStatic = isStatic;
     }
 
     /**

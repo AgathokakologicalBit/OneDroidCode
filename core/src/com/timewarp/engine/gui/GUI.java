@@ -45,6 +45,10 @@ public class GUI {
         cameraPosition.set(cameraPosition.add(direction));
     }
 
+    public static void moveCamera(float x, float y) {
+        cameraPosition.set(x, y);
+    }
+
     public static void beginStaticBlock() {
         cameraPositionLast = cameraPosition.copy();
         cameraPosition.set(0, 0);

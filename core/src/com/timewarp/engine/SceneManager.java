@@ -220,7 +220,14 @@ public class SceneManager {
 
     private void renderGameObject(GameObject gameObject) {
         if (!gameObject.isActive()) return;
-        gameObject.render();
+
+        if (gameObject.isStatic()) {
+            GUI.beginStaticBlock();
+            gameObject.render();
+            GUI.endStaticBlock();
+        } else {
+            gameObject.render();
+        }
     }
 
     /**
