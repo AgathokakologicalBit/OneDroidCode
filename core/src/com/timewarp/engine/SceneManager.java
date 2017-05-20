@@ -36,6 +36,8 @@ public class SceneManager {
 
     private boolean backRequested = false;
 
+    private boolean sceneJustLoaded = false;
+
     /**
      * Starts scene manager
      */
@@ -105,6 +107,8 @@ public class SceneManager {
             return;
         }
 
+        sceneJustLoaded = true;
+
         GUI.resetCameraPosition();
 
         Logger.getAnonymousLogger().log(Level.INFO, "[SceneMG] Loading scene '" + scene.getClass().getSimpleName() + "'");
@@ -137,6 +141,8 @@ public class SceneManager {
      * Updates loaded scene and GUI
      */
     public void update() {
+        sceneJustLoaded = false;
+
         if (Gdx.input.isKeyPressed(Input.Keys.BACK)) {
             if (!backRequested && currentScene.onBackRequest()) {
                 Gdx.app.exit();
@@ -155,7 +161,6 @@ public class SceneManager {
         }
 
         Time.update();
-
         fpsCheckTimer += Gdx.graphics.getDeltaTime();
         if (fpsCheckTimer >= 1f) {
             fpsCheckTimer = 0;
@@ -164,15 +169,8 @@ public class SceneManager {
             Logger.getAnonymousLogger().log(Level.FINEST, "FPS: " + fps);
         }
 
-        // update touch state
-        if (input.isTouched() && !GUI.isLastTouched) {
-            GUI.touchStartPosition.set(input.getX(), input.getY());
-        }
 
-        GUI.isLastTouched = GUI.isTouched;
-        GUI.isTouched = input.isTouched();
-        if (GUI.isTouched) GUI.touchPosition.set(input.getX(), input.getY());
-        else GUI.touchPosition.set(0, 0);
+        updateCursorState();
 
 
         for (GameObject gameObject : currentScene.objects) {
@@ -180,6 +178,12 @@ public class SceneManager {
         }
 
         currentScene.update();
+
+        for (GameObject gameObject : currentScene.objects) {
+            this.updatePostGameObject(gameObject);
+        }
+
+
         Time.resetTimer("delta_time");
     }
 
@@ -188,12 +192,48 @@ public class SceneManager {
         gameObject.update();
     }
 
+    private void updatePostGameObject(GameObject gameObject) {
+        if (!gameObject.isActive()) return;
+        gameObject.postUpdate();
+    }
+
+    private void updateCursorState() {
+        final float deltaTime = Time.getDeltaTime();
+
+        // Recalculate control mouse state
+        GUI.isLastTouched = GUI.isTouched;
+        GUI.isTouched = input.isTouched();
+
+        if (GUI.isTouched) {
+            GUI.touchPosition.set(input.getX(), input.getY());
+            if (!GUI.isLastTouched)
+                GUI.touchStartPosition.set(GUI.touchPosition.copy());
+        }
+
+        if (GUI.isTouched) GUI.timeSinceTouchStart += deltaTime;
+        else GUI.timeSinceTouchStart = 0;
+
+        GUI.isClicked = GUI.isLastTouched && !GUI.isTouched;
+        GUI.isLastLongClicked = GUI.isLongClicked;
+        GUI.isLongClicked = GUI.isTouched && GUI.timeSinceTouchStart >= 0.5f && !GUI.isLastLongClicked;
+
+        final Vector2D movement = GUI.touchStartPosition.sub(GUI.touchPosition);
+        GUI.isLongClicked &= movement.getLengthSquared() <= 5 * 5;
+        GUI.isClicked &= movement.getLengthSquared() <= 5 * 5;
+
+        if (!GUI.isTouched) {
+            GUI.touchStartPosition.set(-1, -1);
+        }
+    }
+
+
     /**
      * Runs every frame
      * Renders loaded scene and draws GUI
      */
     public void render() {
         if (currentScene == null) loadStartScene();
+        if (sceneJustLoaded) return;
 
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         Gdx.gl.glEnable(GL20.GL_BLEND);

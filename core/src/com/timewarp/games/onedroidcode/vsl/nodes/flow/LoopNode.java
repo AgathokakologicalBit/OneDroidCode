@@ -1,16 +1,13 @@
-package com.timewarp.games.onedroidcode.vsl.nodes;
+package com.timewarp.games.onedroidcode.vsl.nodes.flow;
 
 import com.timewarp.games.onedroidcode.vsl.CodeRunner;
 import com.timewarp.games.onedroidcode.vsl.Node;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-public final class RootNode extends Node {
+public class LoopNode extends Node {
 
     @Override
     public Node execute(CodeRunner runner) {
-        Logger.getAnonymousLogger().log(Level.INFO, "ROOT ELEMENT");
+        runner.pushContext(this);
         return next;
     }
 

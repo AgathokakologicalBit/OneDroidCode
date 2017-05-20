@@ -17,6 +17,7 @@ import java.util.logging.Logger;
 public class AssetManager {
 
     public static Preferences preferences;
+    private static TextureRegion[][] gameTextures;
 
 
     // ===--- TEXTURES LIST ---===
@@ -27,6 +28,25 @@ public class AssetManager {
 
     // =- WALL TILES -=
     public static TextureRegion wallStoneTexture;
+
+
+    // =- EDITOR TEXTURES -=
+    public static TextureRegion rootNodeTexture;
+
+    public static TextureRegion groupFlowTexture;
+    public static TextureRegion groupRobotTexture;
+    public static TextureRegion groupRobotSensorsTexture;
+
+    public static TextureRegion flowIfTexture;
+    public static TextureRegion flowWhileTexture;
+
+    public static TextureRegion robotMovementForwardTexture;
+    public static TextureRegion robotMovementTexture;
+    public static TextureRegion robotRotationRightTexture;
+    public static TextureRegion robotRotationLeftTexture;
+    public static TextureRegion robotRotationTexture;
+
+    public static TextureRegion robotSensorBlockTexture;
 
 
     public static void unloadAssets()
@@ -44,13 +64,40 @@ public class AssetManager {
         generateAnimations();
 
         final TextureRegion textureRegion = new TextureRegion(new Texture(Gdx.files.internal("textures/tiles.png")));
-        final TextureRegion[][] gameTextures = textureRegion.split(32, 32);
+        gameTextures = textureRegion.split(32, 32);
 
         playerTexture = gameTextures[0][0];
         floorGrassTexture = gameTextures[1][0];
         wallStoneTexture = gameTextures[2][0];
 
+
+        // ===---   EDITOR TEXTURE SET UP   ---===
+        rootNodeTexture = getEditorHRTexture(0, 3);
+
+        groupFlowTexture = getEditorHRTexture(0, 0);
+        groupRobotTexture = getEditorHRTexture(1, 0);
+        groupRobotSensorsTexture = getEditorHRTexture(2, 0);
+
+        flowIfTexture = getEditorHRTexture(0, 2);
+        flowWhileTexture = getEditorHRTexture(1, 2);
+
+        robotMovementForwardTexture = getEditorHRTexture(3, 1);
+        robotMovementTexture = getEditorHRTexture(0, 1);
+        robotRotationRightTexture = getEditorHRTexture(4, 1);
+        robotRotationLeftTexture = getEditorHRTexture(5, 1);
+        robotRotationTexture = getEditorHRTexture(1, 1);
+
+        robotSensorBlockTexture = getEditorHRTexture(2, 1);
+
+
         Logger.getAnonymousLogger().log(Level.INFO, "Successfully loaded all assets");
+    }
+
+    private static TextureRegion getEditorHRTexture(int x, int y) {
+        final TextureRegion region = gameTextures[4 + y * 2][x * 2];
+        region.setRegionWidth(64);
+        region.setRegionHeight(64);
+        return region;
     }
 
     private static void generateAnimations() {
@@ -96,5 +143,32 @@ public class AssetManager {
         animation.addStep(1f, step);
 
         Animator.add(animation);
+    }
+
+    public static TextureRegion getTexture(String name) {
+        if ("player".equals(name)) return playerTexture;
+
+        if ("act/root".equals(name)) return rootNodeTexture;
+
+        if ("group/flow".equals(name)) return groupFlowTexture;
+        if ("group/robot".equals(name)) return groupRobotTexture;
+        if ("group/robot/control".equals(name)) return groupRobotTexture;
+        if ("group/robot/sensors".equals(name)) return groupRobotSensorsTexture;
+
+
+        if ("act/flow/loopnode".equals(name)) return flowWhileTexture;
+        if ("act/flow/ifnode".equals(name)) return flowIfTexture;
+        if ("act/flow/whileloopnode".equals(name)) return flowWhileTexture;
+
+        if ("act/robot/control/movementforwardnode".equals(name))
+            return robotMovementForwardTexture;
+        if ("act/robot/control/movementnode".equals(name)) return robotMovementTexture;
+        if ("act/robot/control/rotationrightnode".equals(name)) return robotRotationRightTexture;
+        if ("act/robot/control/rotationleftnode".equals(name)) return robotRotationLeftTexture;
+        if ("act/robot/control/rotationnode".equals(name)) return robotRotationTexture;
+
+        if ("act/robot/sensors/blocksensornode".equals(name)) return robotSensorBlockTexture;
+
+        return null;
     }
 }

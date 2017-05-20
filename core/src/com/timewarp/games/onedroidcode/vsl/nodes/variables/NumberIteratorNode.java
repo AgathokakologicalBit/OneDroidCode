@@ -37,9 +37,4 @@ public class NumberIteratorNode extends IteratorNode {
     public void reset() {
 
     }
-
-    @Override
-    public String represent(CodeRunner runner) {
-        return inFrom.toInteger() + "..9" + inTo.toInteger() + ":" + inStep.toInteger();
-    }
 }

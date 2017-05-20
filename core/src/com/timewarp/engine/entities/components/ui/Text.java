@@ -27,7 +27,7 @@ public final class Text extends Component {
     @Override
     public void render() {
         if (this.centerHorizontally) {
-            GUI.DrawText(text, transform.position, transform.scale, textSize, textColor);
+            GUI.drawText(text, transform.position, transform.scale, textSize, textColor);
         } else {
             Vector2D textSizeComputed = GUI.getTextSize(text, textSize);
             Vector2D targetSize = new Vector2D(
@@ -35,7 +35,7 @@ public final class Text extends Component {
                     transform.scale.y
             );
 
-            GUI.DrawText(
+            GUI.drawText(
                     text,
                     transform.position,
                     targetSize,

@@ -100,27 +100,6 @@ public class CodeRunner {
         return false;
     }
 
-    /**
-     * Converts Nodes array to String
-     * @return String representation of code
-     */
-    public String getCodeRepresentation() {
-        String representation = "";
-        Node next = startNode;
-
-        while (next != null) {
-            boolean active = isActive(next);
-            representation += active ? "[" : " ";
-            representation += next.represent(this);
-            representation += active ? "]" : " ";
-
-            next = next.next;
-        }
-
-        return representation;
-    }
-
-
     public Node getActiveNode() {
         return this.nextNode;
     }

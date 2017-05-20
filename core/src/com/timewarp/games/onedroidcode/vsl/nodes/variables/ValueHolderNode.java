@@ -39,10 +39,4 @@ public class ValueHolderNode extends Node {
     public void reset() {
         outValue.value = defaultValue;
     }
-
-
-    @Override
-    public String represent(CodeRunner runner) {
-        return "VAR";
-    }
 }

@@ -23,7 +23,7 @@ public class LevelGrid {
 
     public static LevelGrid instance;
 
-    public TObject player;
+    public Player player;
 
 
     public LevelGrid(int width, int height) {
@@ -71,7 +71,7 @@ public class LevelGrid {
         for (int y = 0; y < height; ++y) {
             for (int x = 0; x < width; ++x) {
                 if (floor[y][x] != null) {
-                    GUI.DrawTextureRegion(
+                    GUI.drawTextureRegion(
                             floor[y][x],
                             x * TILE_SIZE, y * TILE_SIZE,
                             TILE_SIZE, TILE_SIZE
@@ -81,7 +81,7 @@ public class LevelGrid {
         }
 
         for (TObject obj : objects) {
-            GUI.DrawTextureRegion(
+            GUI.drawTextureRegion(
                     obj.texture,
                     obj.transform.position.x * TILE_SIZE, obj.transform.position.y * TILE_SIZE,
                     TILE_SIZE, TILE_SIZE, obj.transform.rotation

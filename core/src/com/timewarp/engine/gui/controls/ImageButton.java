@@ -11,7 +11,7 @@ public class ImageButton extends GameObject {
         super.render();
 
         if (backgroundTexture != null)
-            GUI.DrawTexture(backgroundTexture, transform.position, transform.scale);
+            GUI.drawTexture(backgroundTexture, transform.position, transform.scale);
     }
 
     @Override

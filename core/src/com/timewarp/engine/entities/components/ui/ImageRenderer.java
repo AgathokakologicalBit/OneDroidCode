@@ -32,7 +32,7 @@ public class ImageRenderer extends Component {
 
         switch (sizeMode) {
             case Normal:
-                GUI.DrawTextureRegion(
+                GUI.drawTextureRegion(
                         image,
                         transform.position.x, transform.position.y,
                         imageSize.x, imageSize.y);
@@ -41,7 +41,7 @@ public class ImageRenderer extends Component {
             case Centered:
                 // TODO: render big textures properly
                 final Vector2D pos = transform.position.add(imageSize.div(2));
-                GUI.DrawTextureRegion(
+                GUI.drawTextureRegion(
                         image,
                         pos.x, pos.y,
                         imageSize.x, imageSize.y
@@ -58,7 +58,7 @@ public class ImageRenderer extends Component {
                 imageSizeNew = imageSize.mult(imageRatio);
                 offset = transform.scale.sub(imageSizeNew).div(2);
 
-                GUI.DrawTextureRegion(
+                GUI.drawTextureRegion(
                         image,
                         offset.x, offset.y,
                         imageSizeNew.x, imageSizeNew.y
@@ -66,7 +66,7 @@ public class ImageRenderer extends Component {
                 break;
 
             case Stretch:
-                GUI.DrawTextureRegion(
+                GUI.drawTextureRegion(
                         image,
                         transform.position.x, transform.position.y,
                         transform.scale.x, transform.scale.y
@@ -84,7 +84,7 @@ public class ImageRenderer extends Component {
                 imageSizeNew = imageSize.mult(imageRatio);
                 offset = transform.scale.sub(imageSizeNew).div(2);
 
-                GUI.DrawTextureRegion(
+                GUI.drawTextureRegion(
                         image,
                         offset.x, offset.y,
                         imageSizeNew.x, imageSizeNew.y

@@ -1,16 +1,14 @@
-package com.timewarp.games.onedroidcode.vsl.nodes;
+package com.timewarp.games.onedroidcode.vsl.nodes.robot.control;
 
+import com.timewarp.games.onedroidcode.level.LevelGrid;
 import com.timewarp.games.onedroidcode.vsl.CodeRunner;
 import com.timewarp.games.onedroidcode.vsl.Node;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-public final class RootNode extends Node {
+public class MovementForwardNode extends Node {
 
     @Override
     public Node execute(CodeRunner runner) {
-        Logger.getAnonymousLogger().log(Level.INFO, "ROOT ELEMENT");
+        LevelGrid.instance.moveBy(LevelGrid.instance.player, 0, 1);
         return next;
     }
 

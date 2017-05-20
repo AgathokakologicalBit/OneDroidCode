@@ -19,11 +19,7 @@ public class Mathf {
      * @return clipped value
      */
     public static int clamp(int value, int range_a, int range_b) {
-        if (range_a > range_b) {
-            int tmp = range_a;
-            range_a = range_b;
-            range_b = tmp;
-        }
+        if (range_a > range_b) return range_a;
 
         if (value > range_b) return range_b;
         if (value < range_a) return range_a;
@@ -39,11 +35,7 @@ public class Mathf {
      * @return clipped value
      */
     public static float clamp(float value, float range_a, float range_b) {
-        if (range_a > range_b) {
-            float tmp = range_a;
-            range_a = range_b;
-            range_b = tmp;
-        }
+        if (range_a > range_b) return range_a;
 
         if (value > range_b) return range_b;
         if (value < range_a) return range_a;
@@ -59,11 +51,7 @@ public class Mathf {
      * @return clipped value
      */
     public static double clamp(double value, double range_a, double range_b) {
-        if (range_a > range_b) {
-            double tmp = range_a;
-            range_a = range_b;
-            range_b = tmp;
-        }
+        if (range_a > range_b) return range_a;
 
         if (value > range_b) return range_b;
         if (value < range_a) return range_a;

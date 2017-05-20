@@ -51,9 +51,4 @@ public class MovementNode extends Node {
     public void reset() {
 
     }
-
-    @Override
-    public String represent(CodeRunner runner) {
-        return "MOVE";
-    }
 }

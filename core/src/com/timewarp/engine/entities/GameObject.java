@@ -29,10 +29,11 @@ public class GameObject {
 
 
     // Entity mouse state
-    private Vector2D touchStart;
+    public Vector2D touchStartPosition;
     private boolean isLastPressed;
     private boolean isLastLongClicked;
     private float timeSinceTouchStart;
+    private boolean touchStartAtCurrent;
 
     private boolean isPressed;
     private boolean isClicked;
@@ -52,7 +53,7 @@ public class GameObject {
         this.isActive = true;
         this.isStatic = false;
 
-        this.touchStart = new Vector2D();
+        this.touchStartPosition = new Vector2D();
 
         this.timeSinceTouchStart = 0;
         this.isLastPressed = false;
@@ -76,6 +77,7 @@ public class GameObject {
      */
     public void update() {
         final float deltaTime = Time.getDeltaTime();
+        final Vector2D touchPosition = isStatic ? GUI.touchPosition : GUI.touchPosition.sub(GUI.cameraPosition);
 
         this.updateAnimationState(deltaTime);
 
@@ -85,32 +87,30 @@ public class GameObject {
 
 
         isLastPressed = isPressed;
-        isPressed = Mathf.inRectangle(
-                GUI.touchPosition,
+        isPressed = GUI.isTouched && Mathf.inRectangle(
+                touchPosition,
                 transform.position,
                 transform.scale
         );
 
-        if (isPressed && !isLastPressed)
-            touchStart = GUI.touchPosition.copy();
-
-        final boolean touchStartAtCurrent = Mathf.inRectangle(
-                touchStart,
-                transform.position,
-                transform.scale
-        );
+        if (isPressed && !isLastPressed) {
+            touchStartPosition = GUI.touchPosition.copy();
+            touchStartAtCurrent = true;
+        }
 
         isClicked = isLastPressed && touchStartAtCurrent && !GUI.isTouched;
         isLongClicked = isPressed && timeSinceTouchStart >= 0.5f && !isLastLongClicked;
 
         if (isLongClicked) isLastLongClicked = true;
 
-        final Vector2D movement = touchStart.sub(GUI.touchPosition);
-        isLongClicked &= movement.getLengthSquared() <= 100;
+        final Vector2D movement = touchStartPosition.sub(GUI.touchPosition);
+        isLongClicked &= movement.getLengthSquared() <= 25;
+        isClicked &= movement.getLengthSquared() <= 25;
 
-        if (!isPressed) {
+        if (!isPressed && !isLastPressed) {
             isLastLongClicked = false;
-            touchStart.set(-1, -1);
+            touchStartPosition.set(-1, -1);
+            touchStartAtCurrent = false;
         }
 
         for (int componentId = this.componentsInitList.size() - 1; componentId >= 0; --componentId)

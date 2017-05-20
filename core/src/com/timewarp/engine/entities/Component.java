@@ -4,8 +4,8 @@ public abstract class Component {
 
     private boolean isActive = true;
 
-    protected final GameObject gameObject;
-    protected final Transform transform;
+    public final GameObject gameObject;
+    public final Transform transform;
 
     public Component(GameObject gameObject) {
         this.gameObject = gameObject;

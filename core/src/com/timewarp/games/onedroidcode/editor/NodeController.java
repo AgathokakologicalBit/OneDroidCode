@@ -1,5 +1,6 @@
 package com.timewarp.games.onedroidcode.editor;
 
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.timewarp.games.onedroidcode.vsl.Node;
 
 import java.lang.reflect.Field;
@@ -10,10 +11,16 @@ import java.util.logging.Logger;
 
 public class NodeController<T extends Node> {
 
-    public Class<T> nodeType;
+    public final Class<T> nodeType;
 
-    public ArrayList<NodeIO> inputs;
-    public ArrayList<NodeIO> outputs;
+    public final ArrayList<NodeIO> inputs;
+    public final ArrayList<NodeIO> outputs;
+
+    public String name;
+    public String[] path;
+    public String pathName;
+
+    public TextureRegion texture;
 
 
     public NodeController(Class<T> nodeType) {
@@ -22,8 +29,39 @@ public class NodeController<T extends Node> {
         this.inputs = new ArrayList<NodeIO>();
         this.outputs = new ArrayList<NodeIO>();
 
+        this.identifyNodeType();
         this.extractMethods();
         this.identifyGroup();
+    }
+
+    private NodeController(NodeController<T> obj) {
+        this.nodeType = obj.nodeType;
+        this.inputs = new ArrayList<NodeIO>();
+        for (NodeIO io : obj.inputs) {
+            this.inputs.add(io.copy());
+        }
+
+        this.outputs = new ArrayList<NodeIO>();
+        for (NodeIO io : obj.outputs) {
+            this.outputs.add(io.copy());
+        }
+
+        this.name = obj.name;
+        this.path = obj.path;
+        this.pathName = obj.pathName;
+    }
+
+    private void identifyNodeType() {
+        this.name = this.nodeType.getSimpleName()
+                .replaceAll("([A-Z])", " $1")
+                .toLowerCase()
+                .replace("node", "")
+                .trim();
+        this.path = this.nodeType.getCanonicalName()
+                .toLowerCase()
+                .replace("com.timewarp.games.onedroidcode.vsl.nodes.", "")
+                .split("\\.");
+        this.pathName = this.path[this.path.length - 1];
     }
 
     private void extractMethods() {
@@ -67,5 +105,9 @@ public class NodeController<T extends Node> {
 
     private void identifyGroup() {
 
+    }
+
+    public NodeController copy() {
+        return new NodeController(this);
     }
 }

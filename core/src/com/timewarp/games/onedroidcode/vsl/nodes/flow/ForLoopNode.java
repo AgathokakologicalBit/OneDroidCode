@@ -41,9 +41,4 @@ public class ForLoopNode extends Node {
                         : Value.TYPE_ANY
         );
     }
-
-    @Override
-    public String represent(CodeRunner runner) {
-        return "FOR";
-    }
 }

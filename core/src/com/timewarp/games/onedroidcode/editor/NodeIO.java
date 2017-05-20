@@ -10,6 +10,8 @@ public class NodeIO {
     private String fieldName;
     private String displayName;
 
+    public Object value;
+
 
     public NodeIO(Field field) {
         this.field = field;
@@ -21,6 +23,13 @@ public class NodeIO {
                 .trim();
     }
 
+    private NodeIO(NodeIO obj) {
+        this.field = obj.field;
+        this.fieldName = obj.fieldName;
+        this.displayName = obj.displayName;
+    }
+
+
     public String getFieldName() {
         return fieldName;
     }
@@ -31,5 +40,9 @@ public class NodeIO {
 
     public void patchField(Node node, Object value) throws IllegalAccessException {
         field.set(node, value);
+    }
+
+    public NodeIO copy() {
+        return new NodeIO(this);
     }
 }

@@ -4,20 +4,12 @@ import com.timewarp.engine.Direction;
 import com.timewarp.games.onedroidcode.level.LevelGrid;
 import com.timewarp.games.onedroidcode.vsl.CodeRunner;
 import com.timewarp.games.onedroidcode.vsl.Node;
-import com.timewarp.games.onedroidcode.vsl.Value;
 
-public class RotationNode extends Node {
-
-    public Value inRotation;
-
-
-    public RotationNode() {
-        inRotation = new Value(Value.TYPE_INTEGER);
-    }
+public class RotationLeftNode extends Node {
 
     @Override
     public Node execute(CodeRunner runner) {
-        LevelGrid.instance.player.rotateBy(Direction.fromInteger((Integer) inRotation.value * 2));
+        LevelGrid.instance.player.rotateBy(Direction.LEFT);
         return next;
     }
 

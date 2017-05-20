@@ -37,26 +37,4 @@ public class WhileLoopNode extends Node {
     public void reset() {
 
     }
-
-    @Override
-    public String represent(CodeRunner runner) {
-        String representation = this.toString() + "<";
-        Node nextRepresentationNode = outBlock;
-
-        while (nextRepresentationNode != null && nextRepresentationNode != this) {
-            boolean isActive = runner.isActive(nextRepresentationNode);
-            representation += isActive ? "[" : " ";
-            representation += nextRepresentationNode.represent(runner);
-            representation += isActive ? "]" : " ";
-
-            nextRepresentationNode = nextRepresentationNode.next;
-        }
-
-        return representation + ">";
-    }
-
-    @Override
-    public String toString() {
-        return "While...";
-    }
 }

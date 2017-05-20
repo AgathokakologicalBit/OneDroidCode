@@ -23,11 +23,5 @@ public class IfNode extends Node {
 
     @Override
     public void reset() {
-
-    }
-
-    @Override
-    public String represent(CodeRunner runner) {
-        return "IF";
     }
 }

@@ -34,11 +34,6 @@ public class CodeRunnerTest extends TestCase {
         public void reset() {
             this.isTriggered = false;
         }
-
-        @Override
-        public String represent(CodeRunner runner) {
-            return "#DBG";
-        }
     }
 
     public TriggerNode runUntilTriggerAny(int maxSteps) {

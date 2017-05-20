@@ -5,15 +5,10 @@ import com.timewarp.engine.SceneManager;
 import com.timewarp.games.onedroidcode.editor.GridNodeEditor;
 import com.timewarp.games.onedroidcode.editor.NodeProvider;
 import com.timewarp.games.onedroidcode.vsl.nodes.RootNode;
-import com.timewarp.games.onedroidcode.vsl.nodes.flow.ForLoopNode;
-import com.timewarp.games.onedroidcode.vsl.nodes.flow.IfNode;
-import com.timewarp.games.onedroidcode.vsl.nodes.flow.WhileLoopNode;
-import com.timewarp.games.onedroidcode.vsl.nodes.robot.control.MovementNode;
-import com.timewarp.games.onedroidcode.vsl.nodes.robot.control.RotationNode;
-import com.timewarp.games.onedroidcode.vsl.nodes.robot.sensors.BlockSoliditySensorNode;
-import com.timewarp.games.onedroidcode.vsl.nodes.variables.IteratorNode;
-import com.timewarp.games.onedroidcode.vsl.nodes.variables.NumberIteratorNode;
-import com.timewarp.games.onedroidcode.vsl.nodes.variables.ValueHolderNode;
+import com.timewarp.games.onedroidcode.vsl.nodes.flow.LoopNode;
+import com.timewarp.games.onedroidcode.vsl.nodes.robot.control.MovementForwardNode;
+import com.timewarp.games.onedroidcode.vsl.nodes.robot.control.RotationLeftNode;
+import com.timewarp.games.onedroidcode.vsl.nodes.robot.control.RotationRightNode;
 
 public class VSLEditorScene extends Scene {
 
@@ -33,15 +28,17 @@ public class VSLEditorScene extends Scene {
 
                 // =- MATH -=
                 // =- FLOW -=
-                ForLoopNode.class, IfNode.class, WhileLoopNode.class,
+                // ForLoopNode.class, IfNode.class, WhileLoopNode.class,
+                LoopNode.class,
                 // =- VARIABLES -=
-                ValueHolderNode.class, IteratorNode.class, NumberIteratorNode.class,
+                // ValueHolderNode.class, IteratorNode.class, NumberIteratorNode.class,
 
                 // ==--  ROBOT NODES  --==
                 // =- CONTROLS -=
-                MovementNode.class, RotationNode.class,
+                // MovementNode.class, RotationNode.class,
+                MovementForwardNode.class, RotationRightNode.class, RotationLeftNode.class,
                 // =- SENSORS -=
-                BlockSoliditySensorNode.class,
+                // BlockSensorNode.class,
 
         });
         editor = new GridNodeEditor(nodeProvider, 10, 10);

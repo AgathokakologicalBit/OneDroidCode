@@ -36,14 +36,4 @@ public class TextRenderingNode extends Node {
     public void reset() {
 
     }
-
-    @Override
-    public String represent(CodeRunner runner) {
-        return this.toString();
-    }
-
-    @Override
-    public String toString() {
-        return "OUT";
-    }
 }

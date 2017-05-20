@@ -36,6 +36,11 @@ public class GUI {
     public static Vector2D cameraPosition = new Vector2D();
     private static Vector2D cameraPositionLast = new Vector2D();
 
+    public static float timeSinceTouchStart;
+    public static boolean isClicked;
+    public static boolean isLongClicked;
+    public static boolean isLastLongClicked;
+
 
     public static void resetCameraPosition() {
         cameraPosition.set(0, 0);
@@ -129,8 +134,8 @@ public class GUI {
      * @param thickness Width of border
      * @param color     Shape color
      */
-    public static void DrawRectangle(Vector2D position, Vector2D size, float thickness, Color color) {
-        DrawRectangle(position.x, position.y, size.x, size.y, thickness, color);
+    public static void drawRectangle(Vector2D position, Vector2D size, float thickness, Color color) {
+        drawRectangle(position.x, position.y, size.x, size.y, thickness, color);
     }
 
     /**
@@ -142,8 +147,8 @@ public class GUI {
      * @param height    Height in pixels
      * @param thickness Width of border
      */
-    public static void DrawRectangle(float x, float y, float width, float height, float thickness) {
-        DrawRectangle(x, y, width, height, thickness, Color.BLACK);
+    public static void drawRectangle(float x, float y, float width, float height, float thickness) {
+        drawRectangle(x, y, width, height, thickness, Color.BLACK);
     }
 
     /**
@@ -156,11 +161,11 @@ public class GUI {
      * @param thickness Width of border
      * @param color     Shape color
      */
-    public static void DrawRectangle(float x, float y, float width, float height, float thickness, Color color) {
-        DrawPanel(x - thickness, y - thickness, width + thickness * 2, thickness, color);
-        DrawPanel(x - thickness, y + height, width + thickness * 2, thickness, color);
-        DrawPanel(x - thickness, y, thickness, height, color);
-        DrawPanel(x + width, y, thickness, height, color);
+    public static void drawRectangle(float x, float y, float width, float height, float thickness, Color color) {
+        drawPanel(x - thickness, y - thickness, width + thickness * 2, thickness, color);
+        drawPanel(x - thickness, y + height, width + thickness * 2, thickness, color);
+        drawPanel(x - thickness, y, thickness, height, color);
+        drawPanel(x + width, y, thickness, height, color);
     }
 
 
@@ -170,8 +175,8 @@ public class GUI {
      * @param position Position in pixels
      * @param size     Size in pixels
      */
-    public static void DrawPanel(Vector2D position, Vector2D size) {
-        DrawPanel(position.x, position.y, size.x, size.y, Color.LIGHT_GRAY);
+    public static void drawPanel(Vector2D position, Vector2D size) {
+        drawPanel(position.x, position.y, size.x, size.y, Color.LIGHT_GRAY);
     }
 
     /**
@@ -181,8 +186,8 @@ public class GUI {
      * @param size     Size in pixels
      * @param color    Background color
      */
-    public static void DrawPanel(Vector2D position, Vector2D size, Color color) {
-        DrawPanel(position.x, position.y, size.x, size.y, color);
+    public static void drawPanel(Vector2D position, Vector2D size, Color color) {
+        drawPanel(position.x, position.y, size.x, size.y, color);
     }
 
     /**
@@ -193,8 +198,8 @@ public class GUI {
      * @param width  Width in pixels
      * @param height Height in pixels
      */
-    public static void DrawPanel(float x, float y, float width, float height) {
-        DrawPanel(x, y, width, height, Color.LIGHT_GRAY);
+    public static void drawPanel(float x, float y, float width, float height) {
+        drawPanel(x, y, width, height, Color.LIGHT_GRAY);
     }
 
     /**
@@ -206,7 +211,7 @@ public class GUI {
      * @param height Height in pixels
      * @param color  Background color
      */
-    public static void DrawPanel(float x, float y, float width, float height, Color color) {
+    public static void drawPanel(float x, float y, float width, float height, Color color) {
         batch.setColor(color);
         batch.draw(emptyTexture, x + cameraPosition.x, Height - (y + cameraPosition.y), width, -height);
         batch.setColor(Color.WHITE);
@@ -218,8 +223,8 @@ public class GUI {
      * @param text Text to draw
      * @param position Position in pixels
      */
-    public static void DrawText(String text, Vector2D position) {
-        DrawText(text, position.x, position.y, Color.WHITE, 16);
+    public static void drawText(String text, Vector2D position) {
+        drawText(text, position.x, position.y, Color.WHITE, 16);
     }
 
     /**
@@ -228,8 +233,8 @@ public class GUI {
      * @param position Position in pixels
      * @param size Font size multiplier
      */
-    public static void DrawText(String text, Vector2D position, float size) {
-        DrawText(text, position.x, position.y, Color.WHITE, size);
+    public static void drawText(String text, Vector2D position, float size) {
+        drawText(text, position.x, position.y, Color.WHITE, size);
     }
 
     /**
@@ -238,8 +243,8 @@ public class GUI {
      * @param position Position in pixels
      * @param color Text color
      */
-    public static void DrawText(String text, Vector2D position, Color color) {
-        DrawText(text, position.x, position.y, color, 16);
+    public static void drawText(String text, Vector2D position, Color color) {
+        drawText(text, position.x, position.y, color, 16);
     }
 
     /**
@@ -249,8 +254,8 @@ public class GUI {
      * @param size Font size multiplier
      * @param color Text color
      */
-    public static void DrawText(String text, Vector2D position, float size, Color color) {
-        DrawText(text, position.x, position.y, color, size);
+    public static void drawText(String text, Vector2D position, float size, Color color) {
+        drawText(text, position.x, position.y, color, size);
     }
 
     /**
@@ -259,8 +264,8 @@ public class GUI {
      * @param x Horizontal position in pixels
      * @param y Vertical position in pixels
      */
-    public static void DrawText(String text, float x, float y) {
-        DrawText(text, x, y, Color.WHITE, 16);
+    public static void drawText(String text, float x, float y) {
+        drawText(text, x, y, Color.WHITE, 16);
     }
 
     /**
@@ -270,8 +275,8 @@ public class GUI {
      * @param y Vertical position in pixels
      * @param size Font size multiplier
      */
-    public static void DrawText(String text, float x, float y, float size) {
-        DrawText(text, x, y, Color.WHITE, size);
+    public static void drawText(String text, float x, float y, float size) {
+        drawText(text, x, y, Color.WHITE, size);
     }
 
     /**
@@ -281,8 +286,8 @@ public class GUI {
      * @param y Vertical position in pixels
      * @param color Text color
      */
-    public static void DrawText(String text, float x, float y, Color color) {
-        DrawText(text, x, y, color, 16);
+    public static void drawText(String text, float x, float y, Color color) {
+        drawText(text, x, y, color, 16);
     }
 
     /**
@@ -293,8 +298,8 @@ public class GUI {
      * @param width Text container width in pixels
      * @param height Text container height in pixels
      */
-    public static void DrawText(String text, float x, float y, float width, float height) {
-        DrawText(text, x, y, width, height, 16, Color.WHITE);
+    public static void drawText(String text, float x, float y, float width, float height) {
+        drawText(text, x, y, width, height, 16, Color.WHITE);
     }
 
     /**
@@ -307,12 +312,14 @@ public class GUI {
      * @param scale Text scale multiplier
      * @param color Text color
      */
-    public static void DrawText(String text, float x, float y, float width, float height, float scale, Color color) {
+    public static void drawText(String text, float x, float y, float width, float height, float scale, Color color) {
+        if (text == null || text.isEmpty()) return;
+
         final Vector2D textSize = getTextSize(text, scale);
         final float offset_left = (width - textSize.x) / 2;
         final float offset_top = (height - baseTextSize) / 2;
 
-        DrawText(text, x + offset_left, y + offset_top, color, scale);
+        drawText(text, x + offset_left, y + offset_top, color, scale);
     }
 
     /**
@@ -323,8 +330,8 @@ public class GUI {
      * @param scale Text scale multiplier
      * @param color Text color
      */
-    public static void DrawText(String text, Vector2D position, Vector2D size, float scale, Color color) {
-        DrawText(text, position.x, position.y, size.x, size.y, scale, color);
+    public static void drawText(String text, Vector2D position, Vector2D size, float scale, Color color) {
+        drawText(text, position.x, position.y, size.x, size.y, scale, color);
     }
 
     /**
@@ -335,7 +342,9 @@ public class GUI {
      * @param color Text color
      * @param scale Text scale modifier
      */
-    public static void DrawText(String text, float x, float y, Color color, float scale) {
+    public static void drawText(String text, float x, float y, Color color, float scale) {
+        if (text == null || text.isEmpty()) return;
+
         font.setColor(color);
         font.getRegion().getTexture().setFilter(
                 Texture.TextureFilter.Linear,
@@ -347,6 +356,11 @@ public class GUI {
         font.draw(batch, text, x + cameraPosition.x, Height - (y + cameraPosition.y));
     }
 
+    public static void drawText(String text, float x, float y, float width, float height, Color color) {
+        final float size = Math.min(width / getTextSize(text, 1f).x, height / 2);
+        drawText(text, x, y, width, height, size, color);
+    }
+
 
     /**
      * Draws texture at given position with specified size
@@ -356,7 +370,9 @@ public class GUI {
      * @param width Texture width in pixels
      * @param height Texture height in pixels
      */
-    public static void DrawTexture(Texture texture, float x, float y, float width, float height) {
+    public static void drawTexture(Texture texture, float x, float y, float width, float height) {
+        if (texture == null) return;
+
         batch.draw(texture, x + cameraPosition.x, Height - (y + cameraPosition.y) - height, width, height);
     }
 
@@ -366,15 +382,19 @@ public class GUI {
      * @param position  Position in pixels
      * @param size Texture size in pixels
      */
-    public static void DrawTexture(Texture texture, Vector2D position, Vector2D size) {
-        DrawTexture(texture, position.x, position.y, size.x, size.y);
+    public static void drawTexture(Texture texture, Vector2D position, Vector2D size) {
+        drawTexture(texture, position.x, position.y, size.x, size.y);
     }
 
-    public static void DrawTextureRegion(TextureRegion texture, float x, float y, float width, float height) {
+    public static void drawTextureRegion(TextureRegion texture, float x, float y, float width, float height) {
+        if (texture == null) return;
+
         batch.draw(texture, x + cameraPosition.x, Height - (y + cameraPosition.y) - height, width, height);
     }
 
-    public static void DrawTextureRegion(TextureRegion texture, float x, float y, float width, float height, float rotation) {
+    public static void drawTextureRegion(TextureRegion texture, float x, float y, float width, float height, float rotation) {
+        if (texture == null) return;
+
         batch.draw(
                 texture, x + cameraPosition.x, Height - (y + cameraPosition.y) - height,
                 width / 2, height / 2,
