@@ -14,6 +14,8 @@ public class CodeRunner {
 
     private LinkedList<Node> contexts;
 
+    private Value flagBoolean = new Value(Value.TYPE_BOOLEAN, false);
+
     public CodeRunner() {
         contexts = new LinkedList<Node>();
     }
@@ -39,6 +41,8 @@ public class CodeRunner {
      * Sets pointer to beginning of script
      */
     public void reset() {
+        if (code == null) return;
+
         for (Node node: code)
             node.reset();
 
@@ -76,6 +80,8 @@ public class CodeRunner {
 
 
     private Node findEntrancePointNode() {
+        if (code == null) return null;
+
         for (Node node : code) {
             if (node instanceof RootNode)
                 return node;
@@ -102,5 +108,14 @@ public class CodeRunner {
 
     public Node getActiveNode() {
         return this.nextNode;
+    }
+
+    public Value getFlag(String flagName) {
+        if ("boolean".equals(flagName)) return flagBoolean;
+        return null;
+    }
+
+    public void setFlag(String flagName, Value value) {
+        if ("boolean".equals(flagName)) flagBoolean = value;
     }
 }

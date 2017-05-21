@@ -22,20 +22,22 @@ public class NodeCellComponent extends Component {
     public void render() {
         super.render();
 
-        if (nodeController == null) {
+
+        if (nodeController == null || isSelected) {
             GUI.drawRectangle(
                     transform.position.x, transform.position.y,
                     transform.scale.x, transform.scale.y,
                     3f, /* Thickness */
                     isSelected ? Color.LIME : Color.GRAY
             );
-        } else {
-            GUI.drawTextureRegion(
-                    nodeController.texture,
-                    transform.position.x, transform.position.y,
-                    transform.scale.x, transform.scale.y
-            );
         }
+
+        if (nodeController == null) return;
+        GUI.drawTextureRegion(
+                nodeController.texture,
+                transform.position.x, transform.position.y,
+                transform.scale.x, transform.scale.y
+        );
     }
 
     public void setSize(int size) {

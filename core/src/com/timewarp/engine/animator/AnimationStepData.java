@@ -37,6 +37,10 @@ public class AnimationStepData {
     }
 
     public AnimationStepData copy() {
-        return new AnimationStepData(this.position.copy(), this.size.copy(), this.rotation);
+        return new AnimationStepData(
+                this.position == null ? null : this.position.copy(),
+                this.size == null ? null : this.size.copy(),
+                this.rotation
+        );
     }
 }

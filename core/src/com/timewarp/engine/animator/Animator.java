@@ -9,12 +9,11 @@ import java.util.Queue;
 
 public class Animator {
     private boolean isPlaying = false;
+    private boolean isLooping = false;
 
     private static ArrayList<Animation> animations;
     private Queue<Animation> animationQueue;
     private ArrayList<AnimationEvent> occurredEvents;
-
-    private AnimationStepData lastStep;
 
     private float playTime = 0;
 
@@ -30,8 +29,6 @@ public class Animator {
     public Animator(Transform transform) {
         this.animationQueue = new LinkedList<Animation>();
         this.occurredEvents = new ArrayList<AnimationEvent>(1);
-
-        this.lastStep = new AnimationStepData();
 
         this.transform = transform;
     }
@@ -120,9 +117,12 @@ public class Animator {
         this.animationQueue.clear();
         this.playTime = 0;
         this.isPlaying = false;
-
-        this.lastStep = new AnimationStepData();
     }
+
+    public void setLooping(boolean looping) {
+        this.isLooping = looping;
+    }
+
 
     /**
      * Performs animation step with given delta time
@@ -152,7 +152,10 @@ public class Animator {
 
     private void endCurrentAnimation() {
         // Remove current animation from queue
-        animationQueue.poll();
+        final Animation animation = animationQueue.poll();
+        if (isLooping) {
+            playAnimation(animation.name);
+        }
 
         // Reset animation play time
         this.playTime = 0;
@@ -199,8 +202,12 @@ public class Animator {
         if (!anim.isRelative()) return anim;
 
         for (AnimationStepData step : anim.steps) {
-            step.position.set(step.position.add(transform.position));
-            step.size.set(step.size.add(transform.scale));
+            if (step.position != null) {
+                step.position.set(step.position.add(transform.position));
+            }
+            if (step.size != null) {
+                step.size.set(step.size.add(transform.scale));
+            }
             step.rotation += transform.rotation;
         }
 

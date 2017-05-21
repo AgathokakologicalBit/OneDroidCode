@@ -7,18 +7,18 @@ import com.timewarp.games.onedroidcode.vsl.Value;
 
 public class IfNode extends Node {
 
-    public Value inCondition;
-    public Node onTrue, onFalse;
-
+    public Node out1OnTrue;
+    public Node out2OnFalse;
 
     @Override
     public Node execute(CodeRunner runner) {
-        if (inCondition == null) return next;
+
+        final Value inCondition = runner.getFlag("boolean");
 
         // After execution of branches
         // Next node will be executed
-        runner.pushContext(next);
-        return inCondition.toBoolean() ? onTrue : onFalse;
+        if (next != null) runner.pushContext(next);
+        return inCondition.toBoolean() ? out1OnTrue : out2OnFalse;
     }
 
     @Override

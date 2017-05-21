@@ -5,10 +5,12 @@ import com.timewarp.engine.SceneManager;
 import com.timewarp.games.onedroidcode.editor.GridNodeEditor;
 import com.timewarp.games.onedroidcode.editor.NodeProvider;
 import com.timewarp.games.onedroidcode.vsl.nodes.RootNode;
+import com.timewarp.games.onedroidcode.vsl.nodes.flow.IfNode;
 import com.timewarp.games.onedroidcode.vsl.nodes.flow.LoopNode;
 import com.timewarp.games.onedroidcode.vsl.nodes.robot.control.MovementForwardNode;
 import com.timewarp.games.onedroidcode.vsl.nodes.robot.control.RotationLeftNode;
 import com.timewarp.games.onedroidcode.vsl.nodes.robot.control.RotationRightNode;
+import com.timewarp.games.onedroidcode.vsl.nodes.robot.sensors.BlockSensorNode;
 
 public class VSLEditorScene extends Scene {
 
@@ -16,6 +18,7 @@ public class VSLEditorScene extends Scene {
     private GridNodeEditor editor;
 
     public static Scene previousLevelScene;
+
 
     @Override
     public void initialize() {
@@ -28,7 +31,7 @@ public class VSLEditorScene extends Scene {
 
                 // =- MATH -=
                 // =- FLOW -=
-                // ForLoopNode.class, IfNode.class, WhileLoopNode.class,
+                /* ForLoopNode.class, */ IfNode.class, /*WhileLoopNode.class,*/
                 LoopNode.class,
                 // =- VARIABLES -=
                 // ValueHolderNode.class, IteratorNode.class, NumberIteratorNode.class,
@@ -38,7 +41,7 @@ public class VSLEditorScene extends Scene {
                 // MovementNode.class, RotationNode.class,
                 MovementForwardNode.class, RotationRightNode.class, RotationLeftNode.class,
                 // =- SENSORS -=
-                // BlockSensorNode.class,
+                BlockSensorNode.class,
 
         });
         editor = new GridNodeEditor(nodeProvider, 10, 10);

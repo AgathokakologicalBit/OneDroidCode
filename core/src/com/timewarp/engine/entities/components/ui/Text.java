@@ -1,7 +1,6 @@
 package com.timewarp.engine.entities.components.ui;
 
 import com.badlogic.gdx.graphics.Color;
-import com.timewarp.engine.Vector2D;
 import com.timewarp.engine.entities.Component;
 import com.timewarp.engine.entities.GameObject;
 import com.timewarp.engine.gui.GUI;
@@ -21,26 +20,25 @@ public final class Text extends Component {
     public void awake() {
         this.textColor = Color.WHITE;
         this.text = "";
-        this.textSize = 16;
+        this.textSize = 0;
     }
 
     @Override
     public void render() {
-        if (this.centerHorizontally) {
-            GUI.drawText(text, transform.position, transform.scale, textSize, textColor);
-        } else {
-            Vector2D textSizeComputed = GUI.getTextSize(text, textSize);
-            Vector2D targetSize = new Vector2D(
-                    textSizeComputed.x,
-                    transform.scale.y
-            );
-
+        if (textSize == 0) {
             GUI.drawText(
                     text,
-                    transform.position,
-                    targetSize,
-                    textSize,
-                    textColor
+                    transform.position.x, transform.position.y,
+                    transform.scale.x, transform.scale.y,
+                    textColor, centerHorizontally
+            );
+        } else {
+            GUI.drawText(
+                    text,
+                    transform.position.x, transform.position.y,
+                    transform.scale.x, transform.scale.y,
+                    textSize, textColor,
+                    centerHorizontally
             );
         }
     }
@@ -67,7 +65,7 @@ public final class Text extends Component {
      * Sets text color (Default - white)
      * @param newColor new text color
      */
-    public void setTextColor(Color newColor) {
+    public void setColor(Color newColor) {
         if (newColor == null) newColor = Color.WHITE;
         this.textColor = newColor;
     }
@@ -76,7 +74,7 @@ public final class Text extends Component {
      * Return current text color
      * @return text color
      */
-    public Color getTextColor() {
+    public Color getColor() {
         return this.textColor;
     }
 
@@ -84,7 +82,7 @@ public final class Text extends Component {
      * Sets text size
      * @param newSize new text size
      */
-    public void setTextSize(float newSize) {
+    public void setSize(float newSize) {
         if (newSize < 1) newSize = 1;
         this.textSize = newSize;
     }
@@ -97,7 +95,7 @@ public final class Text extends Component {
         return this.textSize;
     }
 
-    public void setTextAlignment(boolean centerHorizontally) {
+    public void setAlignment(boolean centerHorizontally) {
         this.centerHorizontally = centerHorizontally;
     }
 }

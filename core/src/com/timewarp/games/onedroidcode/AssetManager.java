@@ -5,6 +5,7 @@ import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.timewarp.engine.Direction;
+import com.timewarp.engine.Math.Mathf;
 import com.timewarp.engine.Vector2D;
 import com.timewarp.engine.animator.Animation;
 import com.timewarp.engine.animator.AnimationStepData;
@@ -22,6 +23,7 @@ public class AssetManager {
 
     // ===--- TEXTURES LIST ---===
     public static TextureRegion playerTexture;
+    public static TextureRegion collectibleTexture;
 
     // =- FLOOR TILES -=
     public static TextureRegion floorGrassTexture;
@@ -51,7 +53,7 @@ public class AssetManager {
 
     public static void unloadAssets()
     {
-        GUI.emptyTexture.dispose();
+        GUI.emptyTexture.getTexture().dispose();
 
         preferences.flush();
     }
@@ -66,7 +68,10 @@ public class AssetManager {
         final TextureRegion textureRegion = new TextureRegion(new Texture(Gdx.files.internal("textures/tiles.png")));
         gameTextures = textureRegion.split(32, 32);
 
+
         playerTexture = gameTextures[0][0];
+        collectibleTexture = gameTextures[0][1];
+
         floorGrassTexture = gameTextures[1][0];
         wallStoneTexture = gameTextures[2][0];
 
@@ -110,6 +115,10 @@ public class AssetManager {
         // ===---   ROTATION ANIMATIONS   ---===
         addRotationAnimation(Direction.RIGHT);
         addRotationAnimation(Direction.LEFT);
+
+        // ===---   SPECIAL ANIMATIONS   ---===
+        addCollectibleAnimation();
+        addTextGameoverAnimation();
     }
 
     private static void addMovementAnimation(Direction dir) {
@@ -123,7 +132,7 @@ public class AssetManager {
                 dir.getVector(),
                 new Vector2D()
         );
-        animation.addStep(1f, step);
+        animation.addStep(0.5f, step);
 
         Animator.add(animation);
     }
@@ -140,7 +149,48 @@ public class AssetManager {
                 new Vector2D(),
                 dir.toRadians()
         );
-        animation.addStep(1f, step);
+        animation.addStep(0.5f, step);
+
+        Animator.add(animation);
+    }
+
+    private static void addCollectibleAnimation() {
+        final Animation animation = new Animation(
+                "collectible",
+                Animation.FROM_CUSTOM_POINT,
+                Animation.MODE_ABSOLUTE
+        );
+
+        AnimationStepData stepLeft = new AnimationStepData(
+                null, null,
+                -Mathf.PI / 6
+        );
+        animation.addStep(0f, stepLeft);
+
+        AnimationStepData stepRight = new AnimationStepData(
+                null, null,
+                +Mathf.PI / 6
+        );
+        animation.addStep(0.4f, stepRight);
+        animation.addStep(0.8f, stepLeft.copy());
+
+
+        Animator.add(animation);
+    }
+
+    private static void addTextGameoverAnimation() {
+        final Animation animation = new Animation(
+                "text_gameover",
+                Animation.FROM_START_POINT,
+                Animation.MODE_RELATIVE
+        );
+
+        final AnimationStepData step = new AnimationStepData(
+                new Vector2D(-GUI.Width / 3, -GUI.Height / 3),
+                new Vector2D(GUI.Width * 2 / 3, GUI.Height * 2 / 3),
+                0
+        );
+        animation.addStep(0.5f, step);
 
         Animator.add(animation);
     }

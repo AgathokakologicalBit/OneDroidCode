@@ -75,8 +75,14 @@ public class Animation {
         final float step = (time - left.time) / (right.time - left.time);
 
         // Calculate new state
-        data.position = Mathf.lerp(left.position, right.position, step);
-        data.size = Mathf.lerp(left.size, right.size, step);
+        if (left.position != null && right.position != null) {
+            data.position = Mathf.lerp(left.position, right.position, step);
+        } else data.position = null;
+
+        if (left.size != null && right.size != null) {
+            data.size = Mathf.lerp(left.size, right.size, step);
+        } else data.size = null;
+
         data.rotation = Mathf.lerp(left.rotation, right.rotation, step);
 
         return data;

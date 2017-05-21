@@ -3,14 +3,19 @@ package com.timewarp.games.onedroidcode.editor;
 
 import com.badlogic.gdx.graphics.Color;
 import com.timewarp.engine.Math.Mathf;
+import com.timewarp.engine.SceneManager;
 import com.timewarp.engine.Vector2D;
 import com.timewarp.engine.entities.GameObject;
 import com.timewarp.engine.gui.GUI;
 import com.timewarp.games.onedroidcode.AssetManager;
 import com.timewarp.games.onedroidcode.editor.actions.IAction;
 import com.timewarp.games.onedroidcode.editor.actions.NodeControllerAction;
+import com.timewarp.games.onedroidcode.scenes.VSLEditorScene;
+import com.timewarp.games.onedroidcode.vsl.Node;
 import com.timewarp.games.onedroidcode.vsl.nodes.RootNode;
 
+import java.lang.reflect.Constructor;
+import java.util.ArrayList;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -31,12 +36,13 @@ public class GridNodeEditor {
     private final int STATE_EMPTY = 0;
     private final int STATE_NEW_NODE = 1;
     private final int STATE_NODE_EDIT = 2;
-    private final int STATE_WIRE_SELECTED = 3;
-    private final int STATE_WIRE_ASSIGN = 4;
+    private final int STATE_WIRE_ASSIGN = 3;
+    private final int STATE_NODE_WIRE_ASSIGN = 4;
 
     private int state = STATE_EMPTY;
     private String windowName = "CLICK ON ANY CELL";
     private NodeCellComponent currentCell;
+    private NodeIO targetNodeOutput;
 
     private Vector2D lastTouchPosition;
     private int currentScroll = 0;
@@ -49,6 +55,9 @@ public class GridNodeEditor {
     private final int NODE_CELLS_PER_COLUMN = 4;
     private final int NODE_CELL_SIZE = (GUI.Height - NODE_CELL_SPACING * (NODE_CELLS_PER_COLUMN + 1)) / NODE_CELLS_PER_COLUMN;
 
+    private static NodeController[][] controllers;
+    public static Node[] code;
+
 
     public GridNodeEditor(NodeProvider provider, int width, int height) {
         GridNodeEditor.instance = this;
@@ -58,6 +67,7 @@ public class GridNodeEditor {
         this.width = width;
         this.height = height;
         this.generateField(width, height);
+        if (controllers != null) loadControllers();
     }
 
     private void generateField(int width, int height) {
@@ -126,32 +136,88 @@ public class GridNodeEditor {
                     continue;
 
 
-                if (currentCell != null) currentCell.removeSelection();
-                cell.addSelection();
+                if (state == STATE_WIRE_ASSIGN) {
+                    currentCell.nodeController.next = cell.nodeController;
+                    removeSelection();
+                } else if (state == STATE_NODE_WIRE_ASSIGN) {
+                    targetNodeOutput.value = cell.nodeController;
+                    removeSelection();
+                } else {
+                    if (currentCell != null) currentCell.removeSelection();
+                    cell.addSelection();
 
-                if (cell.nodeController == null) createNode(cell);
-                else selectNode(cell);
+                    if (cell.nodeController == null) createNode(cell);
+                    else selectNode(cell);
+                }
             }
         }
     }
 
     private void createNode(NodeCellComponent cell) {
         state = STATE_NEW_NODE;
-        windowName = "NODE TYPE SELECTION";
+        windowName = "CREATE NEW NODE";
         currentCell = cell;
     }
 
     private void selectNode(NodeCellComponent cell) {
         state = STATE_NODE_EDIT;
-        windowName = "NODE: " + cell.nodeController.name.toUpperCase();
+        windowName = cell.nodeController.name.toUpperCase();
         currentCell = cell;
     }
 
 
     public void render() {
+        this.renderWires();
         this.renderUI();
     }
-    
+
+    private void renderWires() {
+        GUI.endStaticBlock();
+
+        for (NodeCellComponent[] nodesRow : field) {
+            for (NodeCellComponent cell : nodesRow) {
+                if (cell.nodeController == null) continue;
+
+                if (cell.nodeController.next != null) {
+                    if (cell.nodeController.next.parentCell == null) {
+                        cell.nodeController.next = null;
+                    } else {
+                        final Vector2D from = cell.transform.position.add(NODE_CELL_SIZE - 10, 10);
+                        final Vector2D to = cell.nodeController.next.parentCell.transform.position.add(10, 10);
+                        GUI.drawLine(from.x, from.y, to.x, to.y, 5, Color.WHITE);
+                    }
+                }
+
+                int index = 0;
+                for (Object io : cell.nodeController.outputs) {
+                    NodeIO out = (NodeIO) io;
+                    if (out.getType() != Node.class) continue;
+                    if (!(out.value instanceof NodeController)
+                            || ((NodeController) out.value).parentCell == null) {
+                        out.value = null;
+                        continue;
+                    }
+
+                    ++index;
+                    final Vector2D from = cell.transform.position.add(
+                            NODE_CELL_SIZE - 10,
+                            20 + NODE_CELL_SIZE * index / 10
+                    );
+                    final NodeController target = (NodeController) out.value;
+                    final Vector2D to = target.parentCell.transform.position.add(
+                            10,
+                            NODE_CELL_SIZE * 3 / 10
+                    );
+
+                    GUI.drawLine(from.x, from.y, to.x, to.y, 5, Color.LIGHT_GRAY);
+                }
+            }
+        }
+
+        GUI.beginStaticBlock();
+    }
+
+
     private void renderUI() {
         GUI.drawPanel(GUI.Width - EDIT_PANEL_WIDTH, 0, EDIT_PANEL_WIDTH, GUI.Height, Color.DARK_GRAY);
 
@@ -162,28 +228,22 @@ public class GridNodeEditor {
             case STATE_NODE_EDIT:
                 this.renderNodeEditUI();
                 break;
-            case STATE_WIRE_SELECTED:
-                this.renderWireEditUI();
-                break;
             case STATE_WIRE_ASSIGN:
                 this.renderWireAssignUI();
                 break;
         }
 
-        GUI.drawPanel(GUI.Width - EDIT_PANEL_WIDTH, 0, EDIT_PANEL_WIDTH, 100, Color.ORANGE);
+        GUI.drawPanel(GUI.Width - EDIT_PANEL_WIDTH, 0, EDIT_PANEL_WIDTH, 100, Color.OLIVE);
         GUI.drawText(windowName, GUI.Width - EDIT_PANEL_WIDTH + 10, 10, EDIT_PANEL_WIDTH - 20, 80, Color.WHITE);
     }
 
     private void renderNewNodeCreationUI() {
-        final Vector2D size = new Vector2D(EDIT_PANEL_WIDTH - 40, 80);
-        final Vector2D position = new Vector2D(GUI.Width - EDIT_PANEL_WIDTH / 2 - size.x / 2, GUI.Height - 100);
-
-
         final Vector2D actionSize = new Vector2D(EDIT_PANEL_WIDTH / 2, EDIT_PANEL_WIDTH / 2);
 
         // ===---   DRAW DIRECTORIES/CONTROLLERS   ---===
         final IAction[] actions = nodeProvider.getCurrentGroup().getActions();
         final int maxScrollForGroup = (int) (actions.length * (actionSize.y + 40) - 40);
+        final int height = GUI.Height - 260;
 
         if (GUI.isTouched) {
             if (!GUI.isLastTouched) lastTouchPosition = GUI.touchPosition.copy();
@@ -191,8 +251,18 @@ public class GridNodeEditor {
             currentScroll -= GUI.touchPosition.y - lastTouchPosition.y;
             lastTouchPosition.set(GUI.touchPosition);
 
-            currentScroll = Mathf.clamp(currentScroll, 0, maxScrollForGroup - GUI.Height + 260);
+            currentScroll = Mathf.clamp(currentScroll, 0, maxScrollForGroup - height);
         }
+
+        final Vector2D barPos = new Vector2D(GUI.Width - 50, 120);
+        final Vector2D barSize = new Vector2D(30, height + 20);
+
+        final float scrollBarSize = Mathf.clamp((float) height / maxScrollForGroup, 0f, 1f) * barSize.y;
+        final float scrollProgress = (float) currentScroll / (maxScrollForGroup - height);
+        final float scrollBarOffset = scrollProgress * (barSize.y - scrollBarSize);
+
+        GUI.drawPanel(barPos.x, barPos.y, barSize.x, barSize.y, Color.GRAY);
+        GUI.drawPanel(barPos.x, barPos.y + scrollBarOffset, barSize.x, scrollBarSize, Color.LIGHT_GRAY);
 
 
         int index = 0;
@@ -210,27 +280,27 @@ public class GridNodeEditor {
 
             if (GUI.isClicked
                     && GUI.touchPosition.y < GUI.Height - 100 && GUI.touchPosition.y > 100
-                    && Mathf.inRectangle(GUI.touchPosition, actionPosition.add(0, currentScroll), actionSize)) {
+                    && Mathf.inRectangle(GUI.touchPosition, actionPosition, actionSize)) {
 
                 action.onClick(nodeProvider);
                 if (action instanceof NodeControllerAction) {
                     currentCell.setController(nodeProvider.getCurrentNodeController().copy());
                     currentCell.nodeController.texture = action.getTexture();
+                    currentCell.nodeController.parentCell = currentCell;
 
-                    nodeProvider.selectGroup(nodeProvider.getBaseGroup());
-                    state = STATE_EMPTY;
-                    currentCell.removeSelection();
-                    currentScroll = 0;
+                    removeSelection();
                 }
-
             }
         }
 
 
         // ===---   DRAW BUTTONS   ---===
+        final Vector2D size = new Vector2D(EDIT_PANEL_WIDTH - 40, 80);
+        final Vector2D position = new Vector2D(GUI.Width - EDIT_PANEL_WIDTH / 2 - size.x / 2, GUI.Height - 100);
+
         GUI.drawPanel(GUI.Width - EDIT_PANEL_WIDTH, GUI.Height - 120, EDIT_PANEL_WIDTH, 120, Color.DARK_GRAY);
         GUI.drawPanel(position, size, Color.ORANGE);
-        GUI.drawText("back", position.x, position.y, size.x, size.y, Color.WHITE);
+        GUI.drawText("back", position.x, position.y, size.x, size.y);
         if (GUI.isClicked && Mathf.inRectangle(GUI.touchPosition, position, size)) {
             nodeProvider.selectGroup(nodeProvider.getBaseGroup());
             currentScroll = 0;
@@ -238,14 +308,155 @@ public class GridNodeEditor {
     }
 
     private void renderNodeEditUI() {
+        // ===---   DRAW BUTTONS   ---===
+        final Vector2D buttonSize = new Vector2D(EDIT_PANEL_WIDTH - 40, 80);
 
+        final Vector2D p = new Vector2D(
+                GUI.Width - EDIT_PANEL_WIDTH / 2 - buttonSize.x / 2,
+                140
+        );
+        GUI.drawPanel(p, buttonSize, Color.ORANGE);
+
+        String name = currentCell.nodeController.next == null ? "" : currentCell.nodeController.next.name;
+        GUI.drawText("link to [ " + name + " ]", p.x, p.y, buttonSize.x, buttonSize.y);
+        if (GUI.isClicked && Mathf.inRectangle(GUI.touchPosition, p, buttonSize)) {
+            state = STATE_WIRE_ASSIGN;
+            windowName = "SELECT NEXT NODE";
+        }
+
+        // ===---   DRAW NODE CONTAINERS   ---===
+        int index = 0;
+        for (Object io : currentCell.nodeController.outputs) {
+            final NodeIO out = (NodeIO) io;
+            if (out.getType() != Node.class) continue;
+
+            final Vector2D position = new Vector2D(GUI.Width - EDIT_PANEL_WIDTH + 20, 280 + index * 90);
+            final Vector2D size = new Vector2D(EDIT_PANEL_WIDTH - 40, 60);
+            GUI.drawPanel(position.x, position.y, size.x, size.y, Color.ORANGE);
+            GUI.drawText(out.getDisplayName(), position.x, position.y, size.x, size.y);
+
+            if (GUI.isClicked && Mathf.inRectangle(GUI.touchPosition, position, size)) {
+                state = STATE_NODE_WIRE_ASSIGN;
+                windowName = "SELECT TARGET NODE";
+                targetNodeOutput = out;
+            }
+
+            ++index;
+        }
+
+        // ===---   DRAW BUTTONS   ---===
+        final Vector2D position = new Vector2D(p.x, GUI.Height - 100);
+        if (currentCell.nodeController.nodeType == RootNode.class) {
+            final Vector2D bp = new Vector2D(GUI.Width - EDIT_PANEL_WIDTH, GUI.Height - 100);
+            final Vector2D bs = new Vector2D(EDIT_PANEL_WIDTH, 100);
+            GUI.drawPanel(bp, bs, Color.OLIVE);
+            GUI.drawText("start playing", position.x, position.y, buttonSize.x, buttonSize.y);
+
+            if (GUI.isClicked && Mathf.inRectangle(GUI.touchPosition, bp, bs)) {
+                code = generateCode();
+                saveControllers();
+                SceneManager.instance.loadScene(VSLEditorScene.previousLevelScene);
+            }
+        } else {
+            GUI.drawPanel(position, buttonSize, new Color(1f, 0.25f, 0f, 1f));
+            GUI.drawText("remove", position.x, position.y, buttonSize.x, buttonSize.y);
+
+            if (GUI.isClicked && Mathf.inRectangle(GUI.touchPosition, position, buttonSize)) {
+                currentCell.nodeController.reset();
+                currentCell.nodeController = null;
+                removeSelection();
+            }
+        }
     }
 
-    private void renderWireEditUI() {
+    private void saveControllers() {
+        int x = 0, y = 0;
 
+        controllers = new NodeController[height][width];
+        for (NodeCellComponent[] row : field) {
+            x = 0;
+            for (NodeCellComponent component : row) {
+                controllers[y][x++] = component.nodeController;
+            }
+            ++y;
+        }
+    }
+
+    private void loadControllers() {
+        int x = 0, y = 0;
+        for (NodeController[] row : controllers) {
+            x = 0;
+            for (NodeController controller : row) {
+                if (controller == null) {
+                    ++x;
+                    continue;
+                }
+
+                field[y][x].nodeController = controller;
+                controller.parentCell = field[y][x++];
+            }
+            ++y;
+        }
     }
 
     private void renderWireAssignUI() {
+        final Vector2D s = new Vector2D(EDIT_PANEL_WIDTH - 40, 80);
+        final Vector2D p = new Vector2D(GUI.Width - EDIT_PANEL_WIDTH / 2 - s.x / 2, GUI.Height - 100);
 
+        GUI.drawPanel(p, s, Color.RED);
+        GUI.drawText("cancel", p.x, p.y, s.x, s.y);
+        if (GUI.isClicked && Mathf.inRectangle(GUI.touchPosition, p, s)) {
+            removeSelection();
+        }
+    }
+
+    private void removeSelection() {
+        nodeProvider.selectGroup(nodeProvider.getBaseGroup());
+
+        state = STATE_EMPTY;
+        windowName = "CLICK ON ANY CELL";
+
+        currentCell.removeSelection();
+        currentScroll = 0;
+    }
+
+    private Node[] generateCode() {
+        ArrayList<Node> nodes = new ArrayList<Node>();
+        NodeController<RootNode> root = null;
+
+        for (NodeCellComponent[] nodesRow : field) {
+            for (NodeCellComponent cell : nodesRow) {
+                if (cell.nodeController != null && cell.nodeController.nodeType == RootNode.class) {
+                    root = cell.nodeController;
+                }
+            }
+        }
+
+        generateNode(nodes, root);
+        return nodes.toArray(new Node[nodes.size()]);
+    }
+
+    private Node generateNode(ArrayList<Node> code, NodeController controller) {
+        if (controller == null) return null;
+
+        try {
+            final Constructor<Node> constructor = controller.nodeType.getConstructor();
+            constructor.setAccessible(true);
+
+            final Node node = constructor.newInstance();
+            code.add(node);
+            node.append(generateNode(code, controller.next));
+
+            for (Object io : controller.outputs) {
+                NodeIO out = (NodeIO) io;
+                if (out.value == null) continue;
+                out.patchField(node, generateNode(code, (NodeController) out.value));
+            }
+
+            return node;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Can not generate code");
+        }
     }
 }

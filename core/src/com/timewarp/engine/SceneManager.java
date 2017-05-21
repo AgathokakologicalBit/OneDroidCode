@@ -201,6 +201,7 @@ public class SceneManager {
         final float deltaTime = Time.getDeltaTime();
 
         // Recalculate control mouse state
+        GUI.lastTouchPosition.set(GUI.touchPosition);
         GUI.isLastTouched = GUI.isTouched;
         GUI.isTouched = input.isTouched();
 
@@ -277,7 +278,6 @@ public class SceneManager {
         AssetManager.unloadAssets();
 
         GUI.batch.dispose();
-        GUI.emptyTexture.dispose();
         GUI.font.dispose();
 
         if (currentScene == null) return;
@@ -322,6 +322,19 @@ public class SceneManager {
         if (gameObject == null) return;
 
         this.currentScene.objects.add(gameObject);
+    }
+
+    /**
+     * Removes gameobject from scene
+     *
+     * @param gameObject GameObject that will ne deleted
+     */
+    public void removeGameObject(GameObject gameObject) {
+        this.currentScene.objects.remove(gameObject);
+    }
+
+    public boolean objectExists(GameObject obj) {
+        return this.currentScene.objects.contains(obj);
     }
 
     /**

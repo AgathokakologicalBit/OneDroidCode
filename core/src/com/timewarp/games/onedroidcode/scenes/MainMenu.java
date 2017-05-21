@@ -16,9 +16,9 @@ public class MainMenu extends Scene {
         buttonPlay2D = GameObject.instantiate(UIButton.class);
         buttonPlay2D.transform.position.set(50, 50);
         buttonPlay2D.transform.scale.set(500, 100);
-        buttonPlay2D.text.setTextSize(30);
+        buttonPlay2D.text.setSize(30);
         buttonPlay2D.text.set("Play `grid2D` game");
-        buttonPlay2D.text.setTextAlignment(true);
+        buttonPlay2D.text.setAlignment(true);
     }
 
     @Override

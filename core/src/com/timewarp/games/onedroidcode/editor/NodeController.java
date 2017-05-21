@@ -22,6 +22,9 @@ public class NodeController<T extends Node> {
 
     public TextureRegion texture;
 
+    public NodeCellComponent parentCell;
+    public NodeController next;
+
 
     public NodeController(Class<T> nodeType) {
         this.nodeType = nodeType;
@@ -109,5 +112,10 @@ public class NodeController<T extends Node> {
 
     public NodeController copy() {
         return new NodeController(this);
+    }
+
+    public void reset() {
+        parentCell = null;
+        next = null;
     }
 }

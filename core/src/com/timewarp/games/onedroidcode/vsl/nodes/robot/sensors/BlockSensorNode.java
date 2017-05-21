@@ -10,14 +10,6 @@ import com.timewarp.games.onedroidcode.vsl.Value;
 
 public class BlockSensorNode extends Node {
 
-    public Value outBlockExists;
-
-    public BlockSensorNode(Node next) {
-        super(next);
-
-        outBlockExists = new Value(Value.TYPE_BOOLEAN);
-    }
-
     @Override
     public Node execute(CodeRunner runner) {
         final Player player = LevelGrid.instance.player;
@@ -27,8 +19,7 @@ public class BlockSensorNode extends Node {
         final Vector2D target = position.add(dir.getVector()).add(0.5f);
 
         final boolean isSolid = LevelGrid.instance.isObjectSolid((int) target.x, (int) target.y);
-
-        outBlockExists.set(isSolid);
+        runner.setFlag("boolean", new Value(Value.TYPE_BOOLEAN, isSolid));
 
         return next;
     }

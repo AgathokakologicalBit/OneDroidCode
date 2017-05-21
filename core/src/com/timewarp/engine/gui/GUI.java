@@ -14,7 +14,7 @@ import com.timewarp.engine.Vector2D;
 
 public class GUI {
 
-    public static Texture emptyTexture;
+    public static TextureRegion emptyTexture;
 
     public static SpriteBatch batch;
 
@@ -22,6 +22,7 @@ public class GUI {
     public static boolean isTouched = false;
     public static Vector2D touchPosition = new Vector2D();
     public static Vector2D touchStartPosition = new Vector2D();
+    public static Vector2D lastTouchPosition = new Vector2D();
 
     public static int Width;
     public static int Height;
@@ -101,7 +102,7 @@ public class GUI {
         Pixmap pix = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
         pix.setColor(1, 1, 1, 1);
         pix.fill();
-        emptyTexture = new Texture(pix);
+        emptyTexture = new TextureRegion(new Texture(pix));
 
 
         // CALCULATING BASE TEXT SIZE
@@ -299,7 +300,7 @@ public class GUI {
      * @param height Text container height in pixels
      */
     public static void drawText(String text, float x, float y, float width, float height) {
-        drawText(text, x, y, width, height, 16, Color.WHITE);
+        drawText(text, x, y, width, height, Color.WHITE);
     }
 
     /**
@@ -314,12 +315,9 @@ public class GUI {
      */
     public static void drawText(String text, float x, float y, float width, float height, float scale, Color color) {
         if (text == null || text.isEmpty()) return;
-
-        final Vector2D textSize = getTextSize(text, scale);
-        final float offset_left = (width - textSize.x) / 2;
         final float offset_top = (height - baseTextSize) / 2;
 
-        drawText(text, x + offset_left, y + offset_top, color, scale);
+        drawText(text, x, y + offset_top, color, scale);
     }
 
     /**
@@ -344,6 +342,7 @@ public class GUI {
      */
     public static void drawText(String text, float x, float y, Color color, float scale) {
         if (text == null || text.isEmpty()) return;
+        if (scale <= 0) return;
 
         font.setColor(color);
         font.getRegion().getTexture().setFilter(
@@ -357,8 +356,22 @@ public class GUI {
     }
 
     public static void drawText(String text, float x, float y, float width, float height, Color color) {
+        drawText(text, x, y, width, height, color, true);
+    }
+
+    public static void drawText(String text, float x, float y, float width, float height, Color color, boolean center) {
         final float size = Math.min(width / getTextSize(text, 1f).x, height / 2);
-        drawText(text, x, y, width, height, size, color);
+        if (size == 0) return;
+        drawText(text, x, y, width, height, size, color, center);
+    }
+
+    public static void drawText(String t, float x, float y, float w, float h, float s, Color c, boolean ch) {
+        if (ch) {
+            final float tw = getTextSize(t, s).x;
+            drawText(t, x + (w - tw) / 2, y, tw, h, s, c);
+        } else {
+            drawText(t, x, y, w, h, s, c);
+        }
     }
 
 
@@ -404,5 +417,20 @@ public class GUI {
         );
     }
 
-    // TODO: Create other drawing methods
+    public static void drawLine(float x1, float y1, float x2, float y2, float thickness, Color c) {
+        float dx = x2 - x1;
+        float dy = y1 - y2;
+        float dist = (float) Math.sqrt(dx * dx + dy * dy);
+        float rad = (float) Math.atan2(dy, dx);
+
+        batch.setColor(c);
+        batch.draw(
+                emptyTexture, x1 + cameraPosition.x, Height - (y1 + cameraPosition.y),
+                0, 0,
+                dist, thickness,
+                1f, 1f,
+                rad * 180 / Mathf.PI
+        );
+        batch.setColor(Color.WHITE);
+    }
 }

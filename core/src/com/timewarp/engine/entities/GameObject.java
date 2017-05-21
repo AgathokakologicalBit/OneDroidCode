@@ -140,8 +140,8 @@ public class GameObject {
         if (data == null) return;
 
         // update control size and position
-        this.transform.moveTo(data.position);
-        this.transform.setScale(data.size);
+        if (data.position != null) this.transform.moveTo(data.position);
+        if (data.size != null) this.transform.setScale(data.size);
         this.transform.setRotation(data.rotation);
     }
 
@@ -301,5 +301,13 @@ public class GameObject {
      */
     public boolean isLongClicked() {
         return this.isLongClicked;
+    }
+
+    public static void destroy(GameObject gameObject) {
+        SceneManager.instance.removeGameObject(gameObject);
+    }
+
+    public static boolean exists(GameObject obj) {
+        return SceneManager.instance.objectExists(obj);
     }
 }

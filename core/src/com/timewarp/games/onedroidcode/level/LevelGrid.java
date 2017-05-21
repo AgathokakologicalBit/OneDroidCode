@@ -2,6 +2,7 @@ package com.timewarp.games.onedroidcode.level;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.timewarp.engine.Direction;
+import com.timewarp.engine.SceneManager;
 import com.timewarp.engine.Vector2D;
 import com.timewarp.engine.entities.GameObject;
 import com.timewarp.engine.gui.GUI;
@@ -9,6 +10,8 @@ import com.timewarp.engine.gui.controls.PictureBox;
 import com.timewarp.games.onedroidcode.AssetManager;
 import com.timewarp.games.onedroidcode.objects.Player;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 public class LevelGrid {
@@ -54,8 +57,14 @@ public class LevelGrid {
 
 
     public void update() {
+        ArrayList<TObject> deleteQueue = new ArrayList<TObject>();
+
         for (TObject obj : objects) {
-            obj.update();
+            if (!GameObject.exists(obj)) {
+                deleteQueue.add(obj);
+                continue;
+            }
+
             if (obj.animator.isPlaying()) continue;
 
             // Object position is FLOAT
@@ -63,6 +72,10 @@ public class LevelGrid {
             // for grid support
             obj.setX(obj.getX());
             obj.setY(obj.getY());
+        }
+
+        for (TObject obj : deleteQueue) {
+            objects.remove(obj);
         }
     }
 
@@ -129,12 +142,14 @@ public class LevelGrid {
             if (type.isAssignableFrom(obj.getClass()))
                 typedObjects.add((TTO) obj);
 
-        return (TTO[]) typedObjects.toArray(new Object[typedObjects.size()]);
+        return typedObjects.toArray((TTO[]) Array.newInstance(type, typedObjects.size()));
     }
 
 
     public boolean isObjectSolid(int x, int y) {
-        return findSolidObjectByPos(x, y) != null;
+        return findSolidObjectByPos(x, y) != null
+                || x < 0 || y < 0
+                || x >= width || y >= height;
     }
 
     public boolean isTileEmpty(int x, int y) {
@@ -168,19 +183,25 @@ public class LevelGrid {
         if (object.solid && isObjectSolid(x, y))
             return false;
 
+        SceneManager.instance.addGameObject(object);
         this.objects.add(object);
-        object.transform.position.set(x, y);
+
+        object.setActive(false);
         object.init();
+        object.transform.position.set(x, y);
 
         return true;
     }
 
     public boolean isAnimated() {
+        /*
         for (TObject obj : objects) {
             if (obj.animator.isPlaying()) {
                 return true;
             }
         }
         return false;
+        */
+        return this.player.animator.isPlaying();
     }
 }

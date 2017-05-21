@@ -17,7 +17,7 @@ public class NodeIO {
         this.field = field;
         this.fieldName = field.getName();
         this.displayName = this.fieldName
-                .replaceFirst("^(in|out)", "")
+                .replaceFirst("^(in|out)\\d*", "")
                 .replaceAll("([A-Z])", " $1")
                 .toLowerCase()
                 .trim();
@@ -39,10 +39,15 @@ public class NodeIO {
     }
 
     public void patchField(Node node, Object value) throws IllegalAccessException {
+        field.setAccessible(true);
         field.set(node, value);
     }
 
     public NodeIO copy() {
         return new NodeIO(this);
+    }
+
+    public Class getType() {
+        return field.getType();
     }
 }

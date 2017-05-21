@@ -106,7 +106,10 @@ public enum Direction {
         if (this.code < 0) return 0;
         if (this.code > 8) return 0;
 
-        return -this.code * 45;
+        float deg = -this.code * 45;
+        if (deg < -180) deg += 360;
+
+        return deg;
     }
 
     public float toRadians() {

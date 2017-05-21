@@ -79,45 +79,38 @@ public class CodeRunnerTest extends TestCase {
     public void testIfCondition() throws Exception {
         // ===---   CREATE NODES   ---===
         final Node rootNode = new RootNode();
-        final ValueHolderNode booleanValueHolder = new ValueHolderNode(Value.TYPE_BOOLEAN);
         final IfNode ifConditionNode = new IfNode();
 
         final TriggerNode triggerTrue = new TriggerNode("True condition");
         final TriggerNode triggerFalse = new TriggerNode("False condition");
 
 
-        // ===---   SET UP CONDITIONS   ---===
-        ifConditionNode.inCondition = booleanValueHolder.outValue;
-
-
         // ===---   BUILD CODE STRUCTURE   ---===
         rootNode
-                .append(booleanValueHolder)
                 .append(ifConditionNode);
 
-        ifConditionNode.onTrue = triggerTrue;
-        ifConditionNode.onFalse = triggerFalse;
+        ifConditionNode.out1OnTrue = triggerTrue;
+        ifConditionNode.out2OnFalse = triggerFalse;
 
         // ===---   LOAD CODE INTO RUNNER   ---===
         final Node[] code = new Node[]{
                 rootNode,
-
-                booleanValueHolder,
                 ifConditionNode,
-
                 triggerTrue, triggerFalse
         };
         runner.load(code);
 
 
         // ===---   TEST TRIGGERING FALSE NODE   ---===
+        // ===---   SET UP CONDITIONS   ---===
+        runner.setFlag("boolean", new Value(Value.TYPE_BOOLEAN, false));
         TestCase.assertNotNull("Should run up to breakpoint", runUntilTriggerAny(5));
         TestCase.assertFalse("Should not trigger 'True' node", triggerTrue.isTriggered);
         TestCase.assertTrue("Should trigger 'False' node", triggerFalse.isTriggered);
 
         // ===---   TEST TRIGGERING TRUE NODE   ---===
         runner.reset();
-        booleanValueHolder.outValue.set(true);
+        runner.setFlag("boolean", new Value(Value.TYPE_BOOLEAN, true));
 
         TestCase.assertNotNull("Should run up to breakpoint", runUntilTriggerAny(5));
         TestCase.assertTrue("Should trigger 'True' node", triggerTrue.isTriggered);
