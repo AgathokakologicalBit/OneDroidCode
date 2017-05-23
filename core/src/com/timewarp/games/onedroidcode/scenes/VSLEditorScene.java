@@ -1,7 +1,6 @@
 package com.timewarp.games.onedroidcode.scenes;
 
 import com.timewarp.engine.Scene;
-import com.timewarp.engine.SceneManager;
 import com.timewarp.games.onedroidcode.editor.GridNodeEditor;
 import com.timewarp.games.onedroidcode.editor.NodeProvider;
 import com.timewarp.games.onedroidcode.vsl.nodes.RootNode;
@@ -79,7 +78,7 @@ public class VSLEditorScene extends Scene {
 
     @Override
     public boolean onBackRequest() {
-        SceneManager.instance.loadScene(previousLevelScene);
+        editor.saveAndExit();
         return false;
     }
 }

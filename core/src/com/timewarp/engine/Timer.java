@@ -58,7 +58,7 @@ public final class Timer {
     }
 
     /**
-     * Returns how much time is passed since start. Or amount of time left on countdown
+     * Returns how much time is passed since init. Or amount of time left on countdown
      * @return passed/remaining time
      */
     public double getTime() {

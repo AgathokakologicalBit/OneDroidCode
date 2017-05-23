@@ -2,7 +2,6 @@ package com.timewarp.games.onedroidcode.vsl.nodes.robot.control;
 
 import com.timewarp.engine.Direction;
 import com.timewarp.engine.Vector2D;
-import com.timewarp.games.onedroidcode.level.LevelGrid;
 import com.timewarp.games.onedroidcode.vsl.CodeRunner;
 import com.timewarp.games.onedroidcode.vsl.Node;
 import com.timewarp.games.onedroidcode.vsl.Value;
@@ -33,14 +32,14 @@ public class MovementNode extends Node {
                 (inVertical.toInteger() < 0 ? 1 : 0)
                         - (inVertical.toInteger() > 0 ? 1 : 0);
 
-        Vector2D movementDirection = LevelGrid.instance.player.direction.rotatedBy(
+        Vector2D movementDirection = runner.grid.player.direction.rotatedBy(
                 Direction.fromVector(movementHorizontal, movementVertical)
         ).getVector();
 
         Logger.getAnonymousLogger().log(Level.WARNING, "MOVEMENT [DIRECTION]()");
 
-        LevelGrid.instance.moveBy(
-                LevelGrid.instance.player,
+        runner.grid.moveBy(
+                runner.grid.player,
                 (int) movementDirection.x, (int) movementDirection.y
         );
 

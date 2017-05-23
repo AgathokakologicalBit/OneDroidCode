@@ -40,13 +40,19 @@ public class Transform {
 
     public final void moveTo (Vector2D position) {
         final Vector2D diff = this.position.sub(this.localPosition);
-        this.position.set(position.x, position.y);
+        this.position.set(position);
         this.localPosition.set(this.position.sub(diff));
     }
 
     public final void moveBy (Vector2D distance) {
         this.position.set(this.position.add(distance));
         this.localPosition.set(this.localPosition.add(distance));
+    }
+
+    public final void moveToLocal(Vector2D position) {
+        final Vector2D diff = this.localPosition.sub(this.position);
+        this.localPosition.set(position);
+        this.position.set(this.localPosition.sub(diff));
     }
 
     public final void setScale (Vector2D scale) {
@@ -83,7 +89,7 @@ public class Transform {
         final Vector2D oldPos = this.parent == null ? new Vector2D() : this.parent.position;
         final float oldRotation = this.parent == null ? 0 : this.parent.rotation;
 
-        this.parent.addChild(this);
+        parent.addChild(this);
 
         this.moveBy(this.parent.position.sub(oldPos));
         this.localScale.set(this.scale.div(this.parent.scale));

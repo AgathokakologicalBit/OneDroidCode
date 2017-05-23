@@ -221,7 +221,7 @@ public class GUI {
 
     /**
      * Draws text at given position with default size and color
-     * @param text Text to draw
+     * @param text Text to render
      * @param position Position in pixels
      */
     public static void drawText(String text, Vector2D position) {
@@ -230,7 +230,7 @@ public class GUI {
 
     /**
      * Draws text at given position with specified size and default color
-     * @param text Text to draw
+     * @param text Text to render
      * @param position Position in pixels
      * @param size Font size multiplier
      */
@@ -240,7 +240,7 @@ public class GUI {
 
     /**
      * Draws text at given position with specified color and default size
-     * @param text Text to draw
+     * @param text Text to render
      * @param position Position in pixels
      * @param color Text color
      */
@@ -250,7 +250,7 @@ public class GUI {
 
     /**
      * Draws text at given position with specified size and color
-     * @param text Text to draw
+     * @param text Text to render
      * @param position Position in pixels
      * @param size Font size multiplier
      * @param color Text color
@@ -261,7 +261,7 @@ public class GUI {
 
     /**
      * Draws text at given position with default size and color
-     * @param text Text to draw
+     * @param text Text to render
      * @param x Horizontal position in pixels
      * @param y Vertical position in pixels
      */
@@ -271,7 +271,7 @@ public class GUI {
 
     /**
      * Draws text at given position with specified size and default color
-     * @param text Text to draw
+     * @param text Text to render
      * @param x Horizontal position in pixels
      * @param y Vertical position in pixels
      * @param size Font size multiplier
@@ -282,7 +282,7 @@ public class GUI {
 
     /**
      * Draws text at given position with specified color and default size
-     * @param text Text to draw
+     * @param text Text to render
      * @param x Horizontal position in pixels
      * @param y Vertical position in pixels
      * @param color Text color
@@ -293,7 +293,7 @@ public class GUI {
 
     /**
      * Draws text at given position with default size and color
-     * @param text Text to draw
+     * @param text Text to render
      * @param x Horizontal position in pixels
      * @param y Vertical position in pixels
      * @param width Text container width in pixels
@@ -305,7 +305,7 @@ public class GUI {
 
     /**
      * Draws text at given position with given container size, text scale and color
-     * @param text Text to draw
+     * @param text Text to render
      * @param x Horizontal position in pixels
      * @param y Vertical position in pixels
      * @param width Text container width in pixels
@@ -322,7 +322,7 @@ public class GUI {
 
     /**
      * Draws text at given position with specified container size, text scale and color
-     * @param text Text to draw
+     * @param text Text to render
      * @param position Position in pixels
      * @param size Container size in pixels
      * @param scale Text scale multiplier
@@ -334,7 +334,7 @@ public class GUI {
 
     /**
      * Draws text at given position with specified color and size
-     * @param text Text to draw
+     * @param text Text to render
      * @param x Horizontal position in pixels
      * @param y Vertical position in pixels
      * @param color Text color
@@ -377,7 +377,7 @@ public class GUI {
 
     /**
      * Draws texture at given position with specified size
-     * @param texture Texture to draw
+     * @param texture Texture to render
      * @param x  Horizontal position in pixels
      * @param y Vertical position in pixels
      * @param width Texture width in pixels
@@ -391,7 +391,7 @@ public class GUI {
 
     /**
      * Draws texture at given position with specified size
-     * @param texture Texture to draw
+     * @param texture Texture to render
      * @param position  Position in pixels
      * @param size Texture size in pixels
      */

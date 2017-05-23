@@ -46,7 +46,7 @@ public final class Text extends Component {
 
     /**
      * Sets text that will be drawn
-     * @param newText new text to draw
+     * @param newText new text to render
      */
     public void set(String newText) {
         if (newText == null) newText = "";

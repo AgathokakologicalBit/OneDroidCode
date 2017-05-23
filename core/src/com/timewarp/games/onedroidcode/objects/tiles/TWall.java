@@ -10,8 +10,4 @@ public class TWall extends TObject {
         this.solid = true;
     }
 
-    @Override
-    public void update() {
-
-    }
 }

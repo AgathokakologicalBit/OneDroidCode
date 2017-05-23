@@ -20,8 +20,6 @@ public class ImageRenderer extends Component {
 
     @Override
     public void render() {
-        super.render();
-
         if (image == null) return;
 
         final float imageWidth = image.getRegionWidth();
@@ -69,7 +67,8 @@ public class ImageRenderer extends Component {
                 GUI.drawTextureRegion(
                         image,
                         transform.position.x, transform.position.y,
-                        transform.scale.x, transform.scale.y
+                        transform.scale.x, transform.scale.y,
+                        transform.rotation
                 );
                 break;
 

@@ -26,6 +26,9 @@ public class NodeController<T extends Node> {
     public NodeController next;
 
 
+    public Node node;
+
+
     public NodeController(Class<T> nodeType) {
         this.nodeType = nodeType;
 
@@ -95,7 +98,6 @@ public class NodeController<T extends Node> {
         } catch (final Exception e) {
             e.printStackTrace();
 
-            // TODO: Crash application with human-readable error
             throw new RuntimeException(
                     String.format(
                             Locale.US,

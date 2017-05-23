@@ -2,13 +2,13 @@ package com.timewarp.games.onedroidcode.objects;
 
 import com.timewarp.engine.entities.GameObject;
 import com.timewarp.games.onedroidcode.AssetManager;
-import com.timewarp.games.onedroidcode.GameStats;
 import com.timewarp.games.onedroidcode.level.TObject;
 
 public class CollectibleItem extends TObject {
 
     public CollectibleItem() {
         this.solid = false;
+        this.texture = AssetManager.collectibleTexture;
     }
 
     @Override
@@ -23,6 +23,5 @@ public class CollectibleItem extends TObject {
     @Override
     public void onCollision(TObject object) {
         GameObject.destroy(this);
-        GameStats.addScore(1);
     }
 }

@@ -350,12 +350,10 @@ public class GridNodeEditor {
             final Vector2D bp = new Vector2D(GUI.Width - EDIT_PANEL_WIDTH, GUI.Height - 100);
             final Vector2D bs = new Vector2D(EDIT_PANEL_WIDTH, 100);
             GUI.drawPanel(bp, bs, Color.OLIVE);
-            GUI.drawText("start playing", position.x, position.y, buttonSize.x, buttonSize.y);
+            GUI.drawText("init playing", position.x, position.y, buttonSize.x, buttonSize.y);
 
             if (GUI.isClicked && Mathf.inRectangle(GUI.touchPosition, bp, bs)) {
-                code = generateCode();
-                saveControllers();
-                SceneManager.instance.loadScene(VSLEditorScene.previousLevelScene);
+                saveAndExit();
             }
         } else {
             GUI.drawPanel(position, buttonSize, new Color(1f, 0.25f, 0f, 1f));
@@ -422,22 +420,32 @@ public class GridNodeEditor {
 
     private Node[] generateCode() {
         ArrayList<Node> nodes = new ArrayList<Node>();
-        NodeController<RootNode> root = null;
-
-        for (NodeCellComponent[] nodesRow : field) {
-            for (NodeCellComponent cell : nodesRow) {
-                if (cell.nodeController != null && cell.nodeController.nodeType == RootNode.class) {
-                    root = cell.nodeController;
-                }
-            }
-        }
+        NodeController<RootNode> root = field[0][0].nodeController;
 
         generateNode(nodes, root);
+        clearControllerInfo(root);
         return nodes.toArray(new Node[nodes.size()]);
+    }
+
+    private void clearControllerInfo(NodeController controller) {
+        if (controller == null) return;
+        if (controller.node == null) return;
+
+        controller.node = null;
+        clearControllerInfo(controller.next);
+
+        for (Object io : controller.outputs) {
+            NodeIO out = (NodeIO) io;
+            if (!(out.value instanceof NodeController))
+                continue;
+
+            clearControllerInfo((NodeController) out.value);
+        }
     }
 
     private Node generateNode(ArrayList<Node> code, NodeController controller) {
         if (controller == null) return null;
+        if (controller.node != null) return controller.node;
 
         try {
             final Constructor<Node> constructor = controller.nodeType.getConstructor();
@@ -445,11 +453,15 @@ public class GridNodeEditor {
 
             final Node node = constructor.newInstance();
             code.add(node);
+            controller.node = node;
+
             node.append(generateNode(code, controller.next));
 
             for (Object io : controller.outputs) {
                 NodeIO out = (NodeIO) io;
-                if (out.value == null) continue;
+                if (!(out.value instanceof NodeController))
+                    continue;
+
                 out.patchField(node, generateNode(code, (NodeController) out.value));
             }
 
@@ -458,5 +470,11 @@ public class GridNodeEditor {
             e.printStackTrace();
             throw new RuntimeException("Can not generate code");
         }
+    }
+
+    public void saveAndExit() {
+        code = generateCode();
+        saveControllers();
+        SceneManager.instance.loadScene(VSLEditorScene.previousLevelScene);
     }
 }

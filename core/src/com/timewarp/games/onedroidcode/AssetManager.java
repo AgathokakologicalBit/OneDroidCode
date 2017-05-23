@@ -11,6 +11,7 @@ import com.timewarp.engine.animator.Animation;
 import com.timewarp.engine.animator.AnimationStepData;
 import com.timewarp.engine.animator.Animator;
 import com.timewarp.engine.gui.GUI;
+import com.timewarp.games.onedroidcode.level.LevelGrid;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -24,6 +25,9 @@ public class AssetManager {
     // ===--- TEXTURES LIST ---===
     public static TextureRegion playerTexture;
     public static TextureRegion collectibleTexture;
+
+    // =- LEVELS TEXTURES -=
+    public static TextureRegion levelWallFollowerTexture;
 
     // =- FLOOR TILES -=
     public static TextureRegion floorGrassTexture;
@@ -69,14 +73,20 @@ public class AssetManager {
         gameTextures = textureRegion.split(32, 32);
 
 
+        // =- MAIN TEXTURES -=
         playerTexture = gameTextures[0][0];
         collectibleTexture = gameTextures[0][1];
 
+        // =- LEVELS ICON -=
+        levelWallFollowerTexture = getLevelTexture(0, 0);
+
+
+        // =- FLOOR AND WALLS TEXTURE
         floorGrassTexture = gameTextures[1][0];
         wallStoneTexture = gameTextures[2][0];
 
 
-        // ===---   EDITOR TEXTURE SET UP   ---===
+        // ===---   EDITOR TEXTURES   ---===
         rootNodeTexture = getEditorHRTexture(0, 3);
 
         groupFlowTexture = getEditorHRTexture(0, 0);
@@ -105,6 +115,14 @@ public class AssetManager {
         return region;
     }
 
+    private static TextureRegion getLevelTexture(int x, int y) {
+        final TextureRegion region = gameTextures[12 + y * 8][x * 8];
+        region.setRegionWidth(256);
+        region.setRegionHeight(256);
+        return region;
+    }
+
+
     private static void generateAnimations() {
         // ===---   MOVEMENT ANIMATIONS   ---===
         addMovementAnimation(Direction.UP);
@@ -129,7 +147,7 @@ public class AssetManager {
         );
 
         final AnimationStepData step = new AnimationStepData(
-                dir.getVector(),
+                dir.getVector().mult(LevelGrid.TILE_SIZE),
                 new Vector2D()
         );
         animation.addStep(0.5f, step);
@@ -196,8 +214,6 @@ public class AssetManager {
     }
 
     public static TextureRegion getTexture(String name) {
-        if ("player".equals(name)) return playerTexture;
-
         if ("act/root".equals(name)) return rootNodeTexture;
 
         if ("group/flow".equals(name)) return groupFlowTexture;
@@ -218,6 +234,8 @@ public class AssetManager {
         if ("act/robot/control/rotationnode".equals(name)) return robotRotationTexture;
 
         if ("act/robot/sensors/blocksensornode".equals(name)) return robotSensorBlockTexture;
+
+        if ("level/wall_follower".equals(name)) return levelWallFollowerTexture;
 
         return null;
     }

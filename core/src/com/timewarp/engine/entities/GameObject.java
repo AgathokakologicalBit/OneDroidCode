@@ -39,6 +39,8 @@ public class GameObject {
     private boolean isClicked;
     private boolean isLongClicked;
 
+    public boolean isDestroyed;
+
 
     /**
      * Holds all animations and animation queue
@@ -120,7 +122,7 @@ public class GameObject {
 
             this.components.add(component);
             this.componentsInitList.remove(componentId);
-            component.start();
+            component.init();
         }
 
         for (Component component : this.components)

@@ -124,4 +124,8 @@ public class Mathf {
         return true;
 
     }
+
+    public static int random(int from, int to) {
+        return (int) (Math.random() * (to - from)) + from;
+    }
 }

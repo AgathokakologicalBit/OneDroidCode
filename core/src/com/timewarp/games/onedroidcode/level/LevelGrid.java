@@ -2,10 +2,10 @@ package com.timewarp.games.onedroidcode.level;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.timewarp.engine.Direction;
+import com.timewarp.engine.Math.Mathf;
 import com.timewarp.engine.SceneManager;
 import com.timewarp.engine.Vector2D;
 import com.timewarp.engine.entities.GameObject;
-import com.timewarp.engine.gui.GUI;
 import com.timewarp.engine.gui.controls.PictureBox;
 import com.timewarp.games.onedroidcode.AssetManager;
 import com.timewarp.games.onedroidcode.objects.Player;
@@ -20,30 +20,24 @@ public class LevelGrid {
 
     public int width, height;
 
-    private TextureRegion[][] floor;
-    private LinkedList<TObject> objects;
-
-
-    public static LevelGrid instance;
+    protected TextureRegion[][] floor;
+    protected LinkedList<TObject> objects;
 
     public Player player;
 
 
     public LevelGrid(int width, int height) {
-        LevelGrid.instance = this;
-
         this.width = width;
         this.height = height;
 
         this.floor = new TextureRegion[height][width];
         this.objects = new LinkedList<TObject>();
 
-        this.add(this.player = new Player(), 0, 0);
-
         this.generateField(width, height);
+        this.reset();
     }
 
-    private void generateField(int width, int height) {
+    protected void generateField(int width, int height) {
         for (int y = 0; y < height; ++y) {
             for (int x = 0; x < width; ++x) {
                 PictureBox image = GameObject.instantiate(PictureBox.class);
@@ -60,7 +54,7 @@ public class LevelGrid {
         ArrayList<TObject> deleteQueue = new ArrayList<TObject>();
 
         for (TObject obj : objects) {
-            if (!GameObject.exists(obj)) {
+            if (obj.isDestroyed) {
                 deleteQueue.add(obj);
                 continue;
             }
@@ -79,8 +73,9 @@ public class LevelGrid {
         }
     }
 
-    public void draw() {
-        GUI.endStaticBlock();
+    public void render() {
+        // GUI.endStaticBlock();
+        /*
         for (int y = 0; y < height; ++y) {
             for (int x = 0; x < width; ++x) {
                 if (floor[y][x] != null) {
@@ -92,7 +87,9 @@ public class LevelGrid {
                 }
             }
         }
+        */
 
+        /*
         for (TObject obj : objects) {
             GUI.drawTextureRegion(
                     obj.texture,
@@ -100,11 +97,9 @@ public class LevelGrid {
                     TILE_SIZE, TILE_SIZE, obj.transform.rotation
             );
         }
-        GUI.beginStaticBlock();
-    }
+        */
 
-    public void set(int x, int y, int type) {
-        floor[y][x] = AssetManager.floorGrassTexture;
+        // GUI.beginStaticBlock();
     }
 
     public TObject[] findObjectsByPos(int x, int y) {
@@ -179,16 +174,28 @@ public class LevelGrid {
         return move(obj, obj.getX() + byX, obj.getY() + byY);
     }
 
+    public void rotate(TObject obj, Direction dir) {
+        obj.direction = dir;
+        obj.transform.setRotation(dir.toRadians());
+    }
+
+    public void rotateBy(TObject obj, Direction direction) {
+        obj.direction = obj.direction.rotatedBy(direction);
+        obj.animator.playAnimation("rotate_" + direction.toString());
+    }
+
+
     public boolean add(TObject object, int x, int y) {
         if (object.solid && isObjectSolid(x, y))
             return false;
 
-        SceneManager.instance.addGameObject(object);
         this.objects.add(object);
 
-        object.setActive(false);
+        SceneManager.instance.addGameObject(object);
+        object.grid = this;
         object.init();
-        object.transform.position.set(x, y);
+        object.transform.moveTo(new Vector2D(x * TILE_SIZE, y * TILE_SIZE));
+        object.transform.setScale(new Vector2D(TILE_SIZE, TILE_SIZE));
 
         return true;
     }
@@ -203,5 +210,17 @@ public class LevelGrid {
         return false;
         */
         return this.player.animator.isPlaying();
+    }
+
+    public void reset() {
+        this.objects.clear();
+
+        this.add(this.player = new Player(), 0, 0);
+        player.transform.setRotation(-Mathf.PI / 2);
+        player.direction = Direction.RIGHT;
+    }
+
+    public void dispose() {
+        objects.clear();
     }
 }

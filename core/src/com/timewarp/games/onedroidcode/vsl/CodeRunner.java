@@ -1,5 +1,6 @@
 package com.timewarp.games.onedroidcode.vsl;
 
+import com.timewarp.games.onedroidcode.level.LevelGrid;
 import com.timewarp.games.onedroidcode.vsl.nodes.RootNode;
 
 import java.util.LinkedList;
@@ -13,6 +14,8 @@ public class CodeRunner {
     private Node nextNode;
 
     private LinkedList<Node> contexts;
+
+    public LevelGrid grid;
 
     private Value flagBoolean = new Value(Value.TYPE_BOOLEAN, false);
 
@@ -117,5 +120,20 @@ public class CodeRunner {
 
     public void setFlag(String flagName, Value value) {
         if ("boolean".equals(flagName)) flagBoolean = value;
+    }
+
+    public boolean isRunning() {
+        return this.contexts.size() > 0 || nextNode != null;
+    }
+
+    public int getInstructionsCount() {
+        return code == null ? 0 : code.length;
+    }
+
+    public boolean isValid() {
+        return code != null
+                && (getInstructionsCount() == 0
+                || startNode != null
+        );
     }
 }

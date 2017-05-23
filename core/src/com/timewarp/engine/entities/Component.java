@@ -13,7 +13,9 @@ public abstract class Component {
     }
 
     public void awake() {}
-    public void start() {}
+
+    public void init() {
+    }
 
     public void update() {}
     public void postUpdate() {}

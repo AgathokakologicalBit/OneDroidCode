@@ -121,19 +121,20 @@ public class SceneManager {
         }
 
         Logger.getAnonymousLogger().log(Level.INFO, "[SceneMG] Initializing scene");
+        Gdx.gl.glClearColor(
+                ProjectConfig.BACKGROUND_COLOR.r,
+                ProjectConfig.BACKGROUND_COLOR.g,
+                ProjectConfig.BACKGROUND_COLOR.b,
+                1
+        );
         currentScene = scene;
         currentScene.initialize();
 
         Logger.getAnonymousLogger().log(Level.INFO, "[SceneMG] Loading scene resources");
         currentScene.loadResources();
 
-        Logger.getAnonymousLogger().log(Level.INFO, "[SceneMG] Setting up camera resolution");
+        Logger.getAnonymousLogger().log(Level.INFO, "[SceneMG] Setting up camera");
         currentScene.onResolutionChanged();
-
-        Logger.getAnonymousLogger().log(Level.INFO, "[SceneMG] Preparing game objects");
-        for (GameObject gameObject : currentScene.objects)
-            if (gameObject.isActive())
-                gameObject.update();
     }
 
     /**
@@ -178,9 +179,10 @@ public class SceneManager {
         }
 
         currentScene.update();
-
-        for (GameObject gameObject : currentScene.objects) {
-            this.updatePostGameObject(gameObject);
+        if (!sceneJustLoaded) {
+            for (GameObject gameObject : currentScene.objects) {
+                this.updatePostGameObject(gameObject);
+            }
         }
 
 
@@ -330,6 +332,7 @@ public class SceneManager {
      * @param gameObject GameObject that will ne deleted
      */
     public void removeGameObject(GameObject gameObject) {
+        gameObject.isDestroyed = true;
         this.currentScene.objects.remove(gameObject);
     }
 

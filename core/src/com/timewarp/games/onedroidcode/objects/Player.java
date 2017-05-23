@@ -8,9 +8,4 @@ public class Player extends TObject {
     public Player() {
         this.texture = AssetManager.playerTexture;
     }
-
-    @Override
-    public void update() {
-        super.update();
-    }
 }
