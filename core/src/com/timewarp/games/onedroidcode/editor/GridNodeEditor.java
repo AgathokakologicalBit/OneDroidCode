@@ -350,7 +350,7 @@ public class GridNodeEditor {
             final Vector2D bp = new Vector2D(GUI.Width - EDIT_PANEL_WIDTH, GUI.Height - 100);
             final Vector2D bs = new Vector2D(EDIT_PANEL_WIDTH, 100);
             GUI.drawPanel(bp, bs, Color.OLIVE);
-            GUI.drawText("init playing", position.x, position.y, buttonSize.x, buttonSize.y);
+            GUI.drawText("start playing", position.x, position.y, buttonSize.x, buttonSize.y);
 
             if (GUI.isClicked && Mathf.inRectangle(GUI.touchPosition, bp, bs)) {
                 saveAndExit();
