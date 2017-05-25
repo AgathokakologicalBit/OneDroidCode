@@ -28,7 +28,7 @@ public final class Panel extends Component {
 
     @Override
     public void render() {
-        if (this.borderWidth == 0)
+        if (this.borderWidth != 0)
             GUI.drawRectangle(transform.position, transform.scale, borderWidth, borderColor);
 
         GUI.drawPanel(transform.position, transform.scale, backgroundColor);

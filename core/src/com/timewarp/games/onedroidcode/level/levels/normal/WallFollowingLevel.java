@@ -1,4 +1,4 @@
-package com.timewarp.games.onedroidcode.level.levels.dynamic;
+package com.timewarp.games.onedroidcode.level.levels.normal;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.timewarp.engine.Vector2D;
@@ -12,6 +12,12 @@ import com.timewarp.games.onedroidcode.objects.tiles.TWall;
 import java.util.Locale;
 
 public class WallFollowingLevel implements Level {
+
+
+    @Override
+    public Vector2D getSize() {
+        return new Vector2D(10, 10);
+    }
 
     @Override
     public String getSId() {
@@ -56,18 +62,17 @@ public class WallFollowingLevel implements Level {
     }
 
     @Override
-    public CourseInfo getCourseInfo(int courseId) {
-        CourseInfo info = new CourseInfo();
-
+    public CourseInfo getCourseInfo(final int courseId) {
         final int w = courseId % 4 + 1;
         final int h = courseId / 4 + 1;
 
-        info.name = String.format(Locale.US, "%dx%d", h, w);
-        info.id = courseId;
+        return new CourseInfo() {{
+            id = courseId;
+            name = String.format(Locale.US, "%dx%d", h, w);
 
-        info.maxSteps = (w + h + 2) * 2 * 10;
-        info.data = new Vector2D(w, h);
-
-        return info;
+            minSteps = w * 3 + h + 5;
+            maxSteps = (w * 2 + h + 2) * 4 * TICKS_PER_STEP;
+            data = new Vector2D(w, h);
+        }};
     }
 }

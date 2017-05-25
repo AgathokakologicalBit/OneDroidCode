@@ -142,9 +142,9 @@ public class LevelGrid {
 
 
     public boolean isObjectSolid(int x, int y) {
-        return findSolidObjectByPos(x, y) != null
-                || x < 0 || y < 0
-                || x >= width || y >= height;
+        return x < 0 || y < 0
+                || x >= width || y >= height
+                || findSolidObjectByPos(x, y) != null;
     }
 
     public boolean isTileEmpty(int x, int y) {

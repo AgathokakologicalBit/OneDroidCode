@@ -28,6 +28,9 @@ public class AssetManager {
 
     // =- LEVELS TEXTURES -=
     public static TextureRegion levelWallFollowerTexture;
+    public static TextureRegion levelWinkingGateTexture;
+    public static TextureRegion levelOnOneLineTexture;
+    public static TextureRegion levelSpiralBlockTexture;
 
     // =- FLOOR TILES -=
     public static TextureRegion floorGrassTexture;
@@ -79,6 +82,9 @@ public class AssetManager {
 
         // =- LEVELS ICON -=
         levelWallFollowerTexture = getLevelTexture(0, 0);
+        levelWinkingGateTexture = getLevelTexture(1, 0);
+        levelOnOneLineTexture = getLevelTexture(2, 0);
+        levelSpiralBlockTexture = getLevelTexture(0, 1);
 
 
         // =- FLOOR AND WALLS TEXTURE
@@ -236,6 +242,9 @@ public class AssetManager {
         if ("act/robot/sensors/blocksensornode".equals(name)) return robotSensorBlockTexture;
 
         if ("level/wall_follower".equals(name)) return levelWallFollowerTexture;
+        if ("level/winking_gate".equals(name)) return levelWinkingGateTexture;
+        if ("level/on_one_line".equals(name)) return levelOnOneLineTexture;
+        if ("level/spiral_block".equals(name)) return levelSpiralBlockTexture;
 
         return null;
     }

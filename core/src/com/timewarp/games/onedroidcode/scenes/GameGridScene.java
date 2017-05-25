@@ -4,7 +4,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.timewarp.engine.Math.Mathf;
 import com.timewarp.engine.Scene;
 import com.timewarp.engine.SceneManager;
-import com.timewarp.engine.Time;
 import com.timewarp.engine.Vector2D;
 import com.timewarp.engine.entities.GameObject;
 import com.timewarp.engine.gui.GUI;
@@ -26,9 +25,6 @@ import java.util.logging.Logger;
 
 
 public class GameGridScene extends Scene {
-
-    // private UITextbox codeReprTextbox;
-    // private UITextbox outputTextbox;
 
     private UIPanel dataPanel;
 
@@ -63,6 +59,7 @@ public class GameGridScene extends Scene {
 
     private int levelMaxSteps;
     private int levelCurrentSteps;
+    private int levelMinSteps;
     private LevelGridEmulator gridEmulator;
 
 
@@ -86,12 +83,7 @@ public class GameGridScene extends Scene {
         loadLevel();
         initializeVSL();
 
-        Logger.getAnonymousLogger().log(Level.INFO, "[GameSC] Configuring update intervals");
-        Time.addCountdownRepeated("vsl_tick", 0.0001f);
-
-        Logger.getAnonymousLogger().log(Level.INFO, "[GameSC] Starting VSL script");
         isVslRunning = false;
-
         VSLEditorScene.previousLevelScene = this;
 
         GameStats.reset();
@@ -101,6 +93,10 @@ public class GameGridScene extends Scene {
         generateUI();
         gameOver = false;
         infoTextbox.setActive(false);
+
+        levelMaxSteps = 0;
+        levelMaxSteps = 0;
+        levelCurrentSteps = 0;
     }
 
     private void generateUI() {
@@ -153,7 +149,8 @@ public class GameGridScene extends Scene {
 
     private void loadLevel() {
         Logger.getAnonymousLogger().log(Level.INFO, "[GameSC] Loading level");
-        levelGrid = new LevelGrid(10, 10);
+        final Vector2D size = level.getSize();
+        levelGrid = new LevelGrid((int) size.x, (int) size.y);
 
         level.loadTo(levelGrid,
                 targetCourse < 0
@@ -165,19 +162,12 @@ public class GameGridScene extends Scene {
     }
 
     private void initializeVSL() {
-        Logger.getAnonymousLogger().log(Level.INFO, "[GameSC] Starting VSL code runner");
         codeRunner = new CodeRunner();
         codeRunner.load(GridNodeEditor.code);
     }
 
     @Override
     public void onResolutionChanged() {
-        // codeReprTextbox.transform.moveTo(new Vector2D(50, 50));
-        // codeReprTextbox.transform.setScale(new Vector2D(GUI.Width - 100, 50));
-
-        // outputTextbox.transform.moveTo(new Vector2D(50, GUI.Height - 120));
-        // outputTextbox.transform.setScale(new Vector2D(GUI.Width - 100, 80));
-
         DATA_PANEL_WIDTH = GUI.Width * DATA_PANEL_WIDTH_P / 100;
         BUTTON_MARGIN = DATA_PANEL_WIDTH * BUTTON_MARGIN_P / 100;
         BUTTON_SIZE = DATA_PANEL_WIDTH * BUTTON_SIZE_P / 100;
@@ -242,11 +232,15 @@ public class GameGridScene extends Scene {
             return;
         }
 
-        levelGrid.update();
-        if (isVslRunning && Time.isActivated("vsl_tick") && !levelGrid.isAnimated()) {
-            this.codeRunner.step();
-            gameOver = levelGrid.findObjectsByType(CollectibleItem.class).length == 0;
+        // Do 5 runner ticks
+        // Or stop if animation was started(player movement/rotation)
+        for (int i = 0; i < 5; ++i) {
+            if (isVslRunning && !levelGrid.isAnimated()) {
+                this.codeRunner.step();
+                gameOver = levelGrid.findObjectsByType(CollectibleItem.class).length == 0;
+            }
         }
+        levelGrid.update();
 
         if (isVslRunning) {
             this.followPlayer();
@@ -257,7 +251,7 @@ public class GameGridScene extends Scene {
 
     private void testNextCourse() {
         if (targetCourse >= level.getCoursesCount()) {
-            GameStats.score = (levelMaxSteps - levelCurrentSteps) * 100 / levelMaxSteps;
+            GameStats.score = (levelMaxSteps - levelCurrentSteps) * 100 / (levelMaxSteps - levelMinSteps);
             GameStats.steps = levelCurrentSteps;
             GameStats.maxSteps = levelMaxSteps;
             GameStats.instructions = codeRunner.getInstructionsCount();
@@ -273,6 +267,7 @@ public class GameGridScene extends Scene {
 
         final CourseInfo course = level.getCourseInfo(targetCourse);
         levelMaxSteps += course.maxSteps;
+        levelMinSteps += course.minSteps;
         infoTextbox.text.set("Testing: " + course.name);
 
 
@@ -311,8 +306,11 @@ public class GameGridScene extends Scene {
         isVslRunning = false;
 
         levelMaxSteps = 0;
+        levelMinSteps = 0;
         levelCurrentSteps = 0;
-        gridEmulator = new LevelGridEmulator(10, 10);
+
+        final Vector2D size = level.getSize();
+        gridEmulator = new LevelGridEmulator((int) size.x, (int) size.y);
 
         infoTextbox.setActive(true);
         targetCourse = 0;
